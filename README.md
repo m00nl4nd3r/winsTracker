@@ -21,16 +21,6 @@ Wins are organized by:
 
 ---
 
-## Screenshots
-
-> Dashboard overview, quarterly view, and the data management tab
-
-| Dashboard | Log Win | Quarterly View |
-|-----------|---------|----------------|
-| ![Dashboard](screenshots/dashboard.png) | ![Log Win](screenshots/log.png) | ![Quarterly](screenshots/quarterly.png) |
-
----
-
 ## Getting Started
 
 **No installation required.**
