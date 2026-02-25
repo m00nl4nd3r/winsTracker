@@ -680,11 +680,10 @@ var wins = JSON.parse(localStorage.getItem("pcwt_wins") || "[]");
 var years = (function(){
   var stored = JSON.parse(localStorage.getItem("pcwt_years") || "null");
   if(stored) return stored;
-  var cur = new Date().getFullYear().toString();
-  return [cur];
+  return ["2025"];
 })();
 
-var currentYear = localStorage.getItem("pcwt_currentYear") || new Date().getFullYear().toString();
+var currentYear = localStorage.getItem("pcwt_currentYear") || "2025";
 if(years.indexOf(currentYear)===-1) years.push(currentYear);
 
 var currentQ = "Q1";
@@ -1124,7 +1123,7 @@ function doImport(mode){
 
   if(mode==="replace"){
     if(!confirm("This will delete all "+wins.length+" existing wins and replace with "+iw.length+" imported wins. Are you sure?"))return;
-    wins=iw.map(function(w){return Object.assign({},w,{year:String(w.year||w.fy||new Date().getFullYear())});});
+    wins=iw.map(function(w){return Object.assign({},w,{year:String(w.year||w.fy||2025)});});
     years=iyr.length?iyr:[];
   } else {
     // Merge: skip duplicates by id
@@ -1133,7 +1132,7 @@ function doImport(mode){
     var added=0;
     iw.forEach(function(w){
       if(!existing[w.id]){
-        wins.push(Object.assign({},w,{year:String(w.year||w.fy||new Date().getFullYear())}));
+        wins.push(Object.assign({},w,{year:String(w.year||w.fy||2025)}));
         added++;
       }
     });
@@ -1145,7 +1144,7 @@ function doImport(mode){
   wins.forEach(function(w){yset[w.year]=true;});
   years.forEach(function(y){yset[y]=true;});
   years=Object.keys(yset).sort();
-  if(!years.length)years=[new Date().getFullYear().toString()];
+  if(!years.length)years=["2025"];
 
   pendingImportData=null;
   document.getElementById("import-file").value="";
@@ -1173,12 +1172,12 @@ function confirmClear(){
   var yr=pendingClearYear;
   if(yr==="ALL"){
     wins=[];
-    years=[new Date().getFullYear().toString()];
+    years=["2025"];
     currentYear=years[0];
   } else {
     wins=wins.filter(function(w){return w.year!==yr;});
     years=years.filter(function(y){return y!==yr;});
-    if(!years.length)years=[new Date().getFullYear().toString()];
+    if(!years.length)years=["2025"];
     if(currentYear===yr)currentYear=years[years.length-1];
   }
   pendingClearYear=null;
@@ -1269,7 +1268,7 @@ function esc(s){
 function openModal(id){
   document.getElementById(id).classList.add("open");
   if(id==="modal-addyear"){
-    var n=parseInt(years[years.length-1]||new Date().getFullYear().toString(),10)+1;
+    var n=parseInt(years[years.length-1]||"2025",10)+1;
     document.getElementById("addyear-input").value=n;
     setTimeout(function(){document.getElementById("addyear-input").select();},40);
   }
