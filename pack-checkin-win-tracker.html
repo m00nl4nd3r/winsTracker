@@ -362,6 +362,13 @@ tbody td{padding:11px 13px;font-size:13px;vertical-align:top;max-width:260px;}
     <div class="form-actions">
       <button class="btn btn-primary" onclick="addWin()">&#x2713; Save Win</button>
       <button class="btn btn-outline" onclick="clearForm()">Clear</button>
+      <label id="log-another-label" style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-left:6px;user-select:none;padding:7px 14px;border-radius:8px;border:1px solid var(--border2);transition:all .2s;background:var(--surface2);" onmouseenter="this.style.borderColor='var(--primary-dim)'" onmouseleave="if(!document.getElementById('log-another').checked)this.style.borderColor='var(--border2)'">
+        <input type="checkbox" id="log-another" style="display:none;" onchange="var l=this.parentElement;var box=l.querySelector('.custom-cb');if(this.checked){l.style.background='rgba(0,198,224,0.12)';l.style.borderColor='var(--primary)';l.querySelector('span').style.color='var(--primary)';box.style.background='var(--primary)';box.style.borderColor='var(--primary)';box.style.boxShadow='0 0 0 3px rgba(0,198,224,0.25)';box.querySelector('.custom-cb-dot').style.opacity='1';}else{l.style.background='var(--surface2)';l.style.borderColor='var(--border2)';l.querySelector('span').style.color='var(--text3)';box.style.background='transparent';box.style.borderColor='var(--border2)';box.style.boxShadow='none';box.querySelector('.custom-cb-dot').style.opacity='0';}">
+        <span class="custom-cb" style="width:17px;height:17px;border-radius:50%;border:2px solid var(--border2);background:transparent;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;box-shadow:none;">
+          <span class="custom-cb-dot" style="width:7px;height:7px;border-radius:50%;background:#050c17;opacity:0;transition:opacity .15s;flex-shrink:0;"></span>
+        </span>
+        <span style="font-size:12px;color:var(--text3);font-weight:600;transition:color .2s;">Log another after saving</span>
+      </label>
     </div>
   </div>
   <div class="section-title">Recently Logged</div>
@@ -815,7 +822,8 @@ function addWin(){
   currentYear=yr;
   save(); clearForm(); rebuildSelectors(); renderAll();
   showToast("Win saved to "+yr+"!");
-  showTab("wins");
+  var logAnother=document.getElementById("log-another");
+  if(logAnother && logAnother.checked){ showTab("log"); } else { showTab("wins"); }
 }
 
 function clearForm(){
