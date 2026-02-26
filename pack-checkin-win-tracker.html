@@ -537,6 +537,73 @@ tbody td{padding:11px 13px;font-size:13px;vertical-align:top;max-width:260px;}
   </div>
 </div>
 
+<!-- Edit Win Modal -->
+<div class="modal-backdrop" id="modal-edit">
+  <div class="modal" style="width:600px;">
+    <h3>&#x270E; Edit Win</h3>
+    <div class="modal-sub">Update any fields below, then save.</div>
+    <input type="hidden" id="edit-id">
+    <div class="form-row form-row-4" style="margin-bottom:12px;">
+      <div class="form-group"><label>Year</label><select id="edit-year"></select></div>
+      <div class="form-group"><label>Quarter</label>
+        <select id="edit-quarter">
+          <option value="Q1">Q1 &middot; Jan&ndash;Mar</option>
+          <option value="Q2">Q2 &middot; Apr&ndash;Jun</option>
+          <option value="Q3">Q3 &middot; Jul&ndash;Sep</option>
+          <option value="Q4">Q4 &middot; Oct&ndash;Dec</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Standard</label>
+        <select id="edit-standard" onchange="updateEditCats()">
+          <option value="stronger">Stronger Together</option>
+          <option value="own">Own the Outcome</option>
+          <option value="lead">Lead the Way</option>
+          <option value="execute">Execute</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Category</label>
+        <select id="edit-category"></select>
+      </div>
+    </div>
+    <div class="form-row form-row-4" style="margin-bottom:12px;">
+      <div class="form-group"><label>Date</label><input type="date" id="edit-date"></div>
+      <div class="form-group"><label>Impact</label>
+        <select id="edit-impact">
+          <option value="High">&#x1F7E2; High</option>
+          <option value="Medium">&#x1F7E1; Medium</option>
+          <option value="Low">&#x26AA; Low</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Proficiency</label>
+        <select id="edit-prof">
+          <option value="">&#x2014; Optional &#x2014;</option>
+          <option value="Developing">Developing</option>
+          <option value="Approaching">Approaching</option>
+          <option value="Proficient">Proficient</option>
+          <option value="Exceeds">Exceeds</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Manager Tracked (M)?</label>
+        <select id="edit-managed">
+          <option value="no">No</option>
+          <option value="yes">Yes &#x2014; Manager Metric</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row form-row-2" style="margin-bottom:12px;">
+      <div class="form-group"><label>Win Title</label><input type="text" id="edit-title"></div>
+      <div class="form-group"><label>Metric / Count (optional)</label><input type="text" id="edit-metric"></div>
+    </div>
+    <div class="form-group" style="margin-bottom:4px;"><label>Description / Evidence</label>
+      <textarea id="edit-desc" style="min-height:90px;"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('modal-edit')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEdit()">&#x2713; Save Changes</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast" style="display:none;" class="toast"></div>
 <!-- Hidden file input trigger -->
 <input type="file" id="import-file-hidden" accept=".json" style="display:none;">
@@ -839,6 +906,86 @@ function clearForm(){
   document.getElementById("f-metric").value="";
 }
 
+/* ── EDIT WIN ────────────────────────────────────────────────────────────── */
+function editWin(id){
+  var w=null;
+  for(var i=0;i<wins.length;i++){if(wins[i].id===id){w=wins[i];break;}}
+  if(!w)return;
+
+  // Populate year selector
+  var eysel=document.getElementById("edit-year");
+  eysel.innerHTML=years.map(function(y){
+    return "<option value=\""+y+"\""+( y===w.year?" selected":"")+">"+y+"</option>";
+  }).join("");
+
+  document.getElementById("edit-id").value=w.id;
+  document.getElementById("edit-quarter").value=w.quarter;
+  document.getElementById("edit-standard").value=w.standard;
+  document.getElementById("edit-date").value=w.date;
+  document.getElementById("edit-impact").value=w.impact;
+  document.getElementById("edit-prof").value=w.proficiency||"";
+  document.getElementById("edit-managed").value=w.managed?"yes":"no";
+  document.getElementById("edit-title").value=w.title;
+  document.getElementById("edit-metric").value=w.metric||"";
+  document.getElementById("edit-desc").value=w.desc;
+
+  // Populate categories for this standard, then set value
+  updateEditCats(w.category);
+
+  openModal("modal-edit");
+}
+
+function updateEditCats(preselect){
+  var std=document.getElementById("edit-standard").value;
+  var sel=document.getElementById("edit-category");
+  sel.innerHTML="";
+  (CATS[std]||[]).forEach(function(c){
+    var o=document.createElement("option");
+    o.value=c.key;
+    o.textContent=c.label+(c.managed?" (M)":"");
+    sel.appendChild(o);
+  });
+  if(preselect) sel.value=preselect;
+}
+
+function saveEdit(){
+  var id=document.getElementById("edit-id").value;
+  var idx=-1;
+  for(var i=0;i<wins.length;i++){if(wins[i].id===id){idx=i;break;}}
+  if(idx===-1){showToast("Win not found.",true);return;}
+
+  var yr   = document.getElementById("edit-year").value;
+  var q    = document.getElementById("edit-quarter").value;
+  var std  = document.getElementById("edit-standard").value;
+  var cat  = document.getElementById("edit-category").value;
+  var date = document.getElementById("edit-date").value;
+  var ttl  = document.getElementById("edit-title").value.trim();
+  var desc = document.getElementById("edit-desc").value.trim();
+  var imp  = document.getElementById("edit-impact").value;
+  var pro  = document.getElementById("edit-prof").value;
+  var mgd  = document.getElementById("edit-managed").value;
+  var met  = document.getElementById("edit-metric").value.trim();
+
+  if(!ttl||!desc){showToast("Title and Description are required.",true);return;}
+
+  var catList=CATS[std]||[];
+  var catObj=null;
+  for(var i=0;i<catList.length;i++){if(catList[i].key===cat){catObj=catList[i];break;}}
+
+  wins[idx]=Object.assign({},wins[idx],{
+    year:yr,quarter:q,standard:std,category:cat,
+    categoryLabel:catObj?catObj.label:cat,
+    date:date,title:ttl,desc:desc,impact:imp,
+    proficiency:pro,managed:mgd==="yes",metric:met,
+    edited:new Date().toISOString()
+  });
+
+  if(years.indexOf(yr)===-1){years.push(yr);years.sort();}
+  save(); rebuildSelectors(); renderAll();
+  closeModal("modal-edit");
+  showToast("Win updated!");
+}
+
 function deleteWin(id){
   if(!confirm("Delete this win? This cannot be undone."))return;
   wins=wins.filter(function(w){return w.id!==id;});
@@ -928,7 +1075,7 @@ function renderTable(){
     hd("date","Date","width:80px;")+hd("year","Year","width:54px;")+hd("quarter","Qtr","width:50px;")+
     hd("standard","Standard")+hd("categoryLabel","Category")+hd("title","Title / Description")+
     hd("impact","Impact","width:76px;")+hd("proficiency","Proficiency","width:90px;")+
-    "<th style=\"width:40px;\"></th></tr></thead><tbody>"+
+    "<th style=\"width:80px;\"></th></tr></thead><tbody>"+
     f.map(function(w){
       return "<tr>"+
         "<td class=\"td-mono\">"+w.date+"</td>"+
@@ -942,7 +1089,7 @@ function renderTable(){
         "<td><div class=\"td-main\" style=\"font-weight:500;\">"+esc(w.title)+"</div><div class=\"td-sub\">"+esc(w.desc)+"</div></td>"+
         "<td>"+ibadge(w.impact)+"</td>"+
         "<td>"+(w.proficiency?pbadge(w.proficiency):"<span style=\"color:var(--text3);\">&#x2014;</span>")+"</td>"+
-        "<td><button class=\"btn btn-danger-outline btn-xs\" onclick=\"deleteWin('"+w.id+"')\">&#x2715;</button></td></tr>";
+        "<td style=\"white-space:nowrap;\"><button class=\"btn btn-outline btn-xs\" onclick=\"editWin('"+w.id+"')\" style=\"margin-right:4px;\">&#x270E;</button><button class=\"btn btn-danger-outline btn-xs\" onclick=\"deleteWin('"+w.id+"')\">&#x2715;</button></td></tr>";
     }).join("")+"</tbody></table>";
 
   function hd(k,lbl,sty){
@@ -979,7 +1126,7 @@ function renderQuarterly(q){
       var s=SMETA[std];
       html+="<div style=\"margin-bottom:20px;\"><div class=\"section-title\" style=\"color:"+s.color+";\">"+ s.label+
         " <span style=\"font-size:12px;color:var(--text3);font-family:'IBM Plex Sans',sans-serif;text-transform:none;letter-spacing:0;\">("+sw.length+")</span></div>"+
-        "<div class=\"table-wrap\"><table><thead><tr><th style=\"width:86px;\">Date</th><th>Category</th><th>Title / Description</th><th style=\"width:76px;\">Impact</th><th style=\"width:90px;\">Proficiency</th></tr></thead><tbody>"+
+        "<div class=\"table-wrap\"><table><thead><tr><th style=\"width:86px;\">Date</th><th>Category</th><th>Title / Description</th><th style=\"width:76px;\">Impact</th><th style=\"width:90px;\">Proficiency</th><th style=\"width:80px;\"></th></tr></thead><tbody>"+
         sw.map(function(w){
           return "<tr><td class=\"td-mono\">"+w.date+"</td>"+
             "<td><div class=\"td-meta\">"+esc(w.categoryLabel)+"</div>"+
@@ -988,7 +1135,8 @@ function renderQuarterly(q){
             "</td>"+
             "<td><div class=\"td-main\" style=\"font-weight:500;\">"+esc(w.title)+"</div><div class=\"td-sub\">"+esc(w.desc)+"</div></td>"+
             "<td>"+ibadge(w.impact)+"</td>"+
-            "<td>"+(w.proficiency?pbadge(w.proficiency):"<span style=\"color:var(--text3);\">&#x2014;</span>")+"</td></tr>";
+            "<td>"+(w.proficiency?pbadge(w.proficiency):"<span style=\"color:var(--text3);\">&#x2014;</span>")+"</td>"+
+            "<td style=\"white-space:nowrap;\"><button class=\"btn btn-outline btn-xs\" onclick=\"editWin('"+w.id+"')\" style=\"margin-right:4px;\">&#x270E;</button><button class=\"btn btn-danger-outline btn-xs\" onclick=\"deleteWin('"+w.id+"')\" >&#x2715;</button></td></tr>";
         }).join("")+"</tbody></table></div></div>";
     });
   }

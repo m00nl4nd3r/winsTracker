@@ -1,81 +1,74 @@
-# 🐺 Pack Check-In Win Tracker
+# 🐺 Win Tracker
 
-A single-file, browser-based tool for retroactively logging and organizing work wins throughout the year — built specifically around the **STEEP performance framework** (Stronger Together, Own the Outcome, Lead the Way, Execute).
+A single-file, browser-based tool for logging and organizing work wins throughout the year — built around the **STEEP performance framework** (Stronger Together, Own the Outcome, Lead the Way, Execute).
 
-No install. No server. No account. Just open the file and go.
+No install. No server. No account. Open the file and go.
 
 ---
 
-## What It Does
+## Releases
 
-Performance reviews ask you to recall a full year of contributions — recognition given, tickets resolved, certifications earned, mentoring sessions, community outreach, and more. This tracker lets you log wins as they happen (or retroactively) so you're never scrambling at review time.
-
-Wins are organized by:
-- **Year** (calendar year — 2024, 2025, 2026…)
-- **Quarter** (Q1 Jan–Mar / Q2 Apr–Jun / Q3 Jul–Sep / Q4 Oct–Dec)
-- **STEEP Standard** (Stronger Together, Own the Outcome, Lead the Way, Execute)
-- **Category / Deliverable** (19 categories mapped directly to the rubric)
-- **Impact level** (High / Medium / Low)
-- **Proficiency level** (Developing → Approaching → Proficient → Exceeds)
-- **Manager-tracked flag** — marks metrics your manager can independently verify
+| Version | File | What changed |
+|---------|------|--------------|
+| **v2.0** | `wins-tracker-v2.0.html` | Multi-year support, edit wins, backup/restore, clear history, quick-log checkbox |
+| v1.0 | *(initial)* | Single fiscal year, log/view/export only |
 
 ---
 
 ## Getting Started
 
-**No installation required.**
+1. Download [`wins-tracker-v2.0.html`](wins-tracker-v2.0.html)
+2. Open it in any modern browser
+3. Start logging — data saves automatically to your browser's `localStorage`
 
-1. Download [`pack-checkin-win-tracker.html`](pack-checkin-win-tracker.html)
-2. Open it in any modern browser (Chrome, Firefox, Edge, Safari)
-3. Start logging wins
-
-Your data is saved automatically to your browser's `localStorage`. Use the **Data tab** to export a `.json` backup so your wins are safe even if the cache is cleared.
+> **Important:** Browser cache can be cleared at any time. Use the **Data tab → Download Backup** regularly to keep a `.json` copy of your wins somewhere safe.
 
 ---
 
 ## Features
 
 ### 📊 Dashboard
-- Win counts broken down by STEEP standard and by quarter
-- Category bar chart for the active year
-- Recent wins feed with quick-glance badges
+Win counts by STEEP standard and by quarter, a category bar chart, and a recent wins feed — all scoped to the active year.
 
 ### ➕ Log Win
-- Structured form: Year → Quarter → Standard → Category → Title → Description
-- Optional fields: metric/count, proficiency level, manager-tracked toggle
-- Auto-date, auto-year default to today
+Structured form with cascading fields: Year → Quarter → Standard → Category → Title → Description, plus optional impact level, proficiency level, manager-tracked flag, and metric/count. Check **"Log another after saving"** to stay on the form and keep logging without extra clicks.
 
 ### 🏆 All Wins
-- Full filterable, sortable table across all years
-- Filter by year, standard, quarter, impact, or proficiency
-- Full-text search across title, description, category, and metric
-- Delete individual wins with confirmation
+Full filterable, sortable table across all years. Filter by year, standard, quarter, impact, or proficiency. Full-text search across title, description, category, and metric. Edit or delete any win inline.
+
+### ✎ Edit Wins
+Click the edit button on any row in All Wins or Quarterly View to open a pre-populated modal. All fields are editable — including year, quarter, standard, and category. Changes are saved in place without affecting the win's original creation timestamp.
 
 ### 📅 Quarterly View
-- Per-quarter breakdown with a year selector
-- Wins grouped by STEEP standard within each quarter
+Per-quarter breakdown with a year selector. Wins grouped by STEEP standard. Edit and delete buttons on every row.
 
 ### 🗂 All Years
-- Cards showing win counts per year
-- Year-over-year breakdown table comparing all four standards
+Year cards showing win counts at a glance, plus a year-over-year breakdown table comparing all four standards side by side.
 
 ### 📋 Standards & Rubrics
-- Built-in reference table for all 12 STEEP strands
-- Developing → Approaching → Proficient → Exceeds definitions for every strand
+Built-in reference for all 12 STEEP strands with full Developing → Approaching → Proficient → Exceeds descriptors.
 
 ### ⚙ Data Management
-- **Backup** — exports all wins as a timestamped `.json` file
-- **Restore** — imports a backup with **Merge** (adds new, skips duplicates) or **Replace All** modes
-- **Clear History** — delete wins by year or all at once, with confirmation
-- **Storage summary** — total wins, years tracked, KB used, high-impact count
 
-### Export Options
-| Format | Scope |
-|--------|-------|
-| CSV | Current year or all years |
-| HTML | All years, clean printable layout |
-| PDF | Browser print dialog |
-| JSON | Full backup including metadata |
+| Action | What it does |
+|--------|-------------|
+| **Download Backup** | Exports all wins as a timestamped `.json` file |
+| **Restore — Merge** | Imports a backup, adds new wins, skips duplicates by ID |
+| **Restore — Replace All** | Imports a backup, overwrites all existing data |
+| **Clear History** | Deletes wins for a specific year or all years, with confirmation |
+
+---
+
+## Quarters
+
+Standard calendar year quarters — no fiscal year logic.
+
+| Quarter | Months |
+|---------|--------|
+| Q1 | January – March |
+| Q2 | April – June |
+| Q3 | July – September |
+| Q4 | October – December |
 
 ---
 
@@ -84,35 +77,35 @@ Your data is saved automatically to your browser's `localStorage`. Use the **Dat
 | Standard | Categories |
 |----------|------------|
 | **Stronger Together** | Recognition Performed *(M)*, Mentoring Sessions, Improve Culture / Face of AW, Pack Unity, Other |
-| **Own the Outcome** | Replicon / Timecard *(M)*, MSA / Learnamp, Role Certified *(M)*, Office Attendance *(M)* |
+| **Own the Outcome** | Replicon (Timecard) *(M)*, MSA / Learnamp, Role Certified *(M)*, Office Attendance *(M)* |
 | **Lead the Way** | Innovate / Self Improve / Immersive Labs, Certifications, SPiDRs / Tools / Methods, Brand Awareness, Community Outreach |
 | **Execute** | Recognition Received *(M)*, SPiDRs Performed / Trackable *(M)*, Partnership with AWN Teams *(M)*, Tickets *(M)* |
 
-> *(M)* = Manager Tracked — metrics your manager independently verifies
+> *(M)* = Manager Tracked metric
 
 ---
 
 ## Data & Privacy
 
-All data is stored **locally in your browser** using `localStorage`. Nothing is sent to any server. The file has no external dependencies beyond Google Fonts (loaded from CDN for display only).
+All data is stored locally in your browser via `localStorage`. Nothing is transmitted anywhere. The file has no runtime dependencies beyond Google Fonts (loaded from CDN for display only).
 
 **Recommended workflow:**
-1. Log wins regularly throughout the year
-2. Export a `.json` backup after each significant logging session
-3. Keep backups in a personal folder or cloud storage (OneDrive, Google Drive, etc.)
-4. Re-import from backup if you switch browsers or clear your cache
+- Log wins regularly as they happen
+- Export a `.json` backup after any significant session
+- Store backups in a personal folder, OneDrive, or Google Drive
+- Re-import from backup if you switch browsers or clear your cache
+
+---
+
+## Migrating from v1.0
+
+v2.0 automatically detects and migrates data from the old storage keys used in v1.0 (`packWins`, `packWins_v2`), including converting any FY-labeled years (e.g. `FY26`) to calendar years (e.g. `2025`). No manual steps needed — just open the new file.
 
 ---
 
 ## Browser Compatibility
 
-| Browser | Support |
-|---------|---------|
-| Chrome 90+ | ✅ Full |
-| Firefox 88+ | ✅ Full |
-| Edge 90+ | ✅ Full |
-| Safari 14+ | ✅ Full |
-| Mobile browsers | ✅ Responsive layout |
+Chrome 90+, Firefox 88+, Edge 90+, Safari 14+. Responsive layout works on mobile.
 
 ---
 
@@ -120,28 +113,14 @@ All data is stored **locally in your browser** using `localStorage`. Nothing is 
 
 ```
 winsTracker/
-└── pack-checkin-win-tracker.html   # The entire app — one self-contained file
+├── wins-tracker-v2.0.html   # Full app — single self-contained file
+└── README.md
 ```
 
-Everything — HTML, CSS, and JavaScript — lives in a single file. No build step, no dependencies, no `node_modules`.
-
----
-
-## Contributing
-
-Issues and pull requests are welcome. A few things worth knowing if you're modifying the file:
-
-- **State** is managed in plain JS variables (`wins`, `years`, `currentYear`) and persisted to `localStorage` under the keys `pcwt_wins`, `pcwt_years`, and `pcwt_currentYear`
-- **Migration logic** at boot handles importing wins from earlier versions of the tracker (including FY-labeled years from the original version)
-- The `CATS` object defines all deliverable categories per standard; the `STDS` array defines the rubric content for the Standards tab
-- All rendering is done via innerHTML string building — no framework, no virtual DOM
+No build step. No dependencies. No `node_modules`.
 
 ---
 
 ## License
 
-MIT — do whatever you want with it.
-
----
-
-*Built to support CSE performance reviews. Adapt freely for any role or framework.*
+MIT
