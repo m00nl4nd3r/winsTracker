@@ -10,14 +10,15 @@ No install. No server. No account. Open the file and go.
 
 | Version | File | What changed |
 |---------|------|--------------|
-| **v2.0** | `wins-tracker-v2.0.html` | Multi-year support, edit wins, backup/restore, clear history, quick-log checkbox |
+| **v3.0** | `wins-tracker-v3.0.html` | Overhauled HTML and PDF exports — dark theme, colored badges, per-year/quarter breakdowns, summary stats |
+| v2.0 | `wins-tracker-v2.0.html` | Multi-year support, edit wins, backup/restore, clear history, quick-log checkbox |
 | v1.0 | *(initial)* | Single fiscal year, log/view/export only |
 
 ---
 
 ## Getting Started
 
-1. Download [`wins-tracker-v2.0.html`](wins-tracker-v2.0.html)
+1. Download [`wins-tracker-v3.0.html`](wins-tracker-v3.0.html)
 2. Open it in any modern browser
 3. Start logging — data saves automatically to your browser's `localStorage`
 
@@ -57,6 +58,15 @@ Built-in reference for all 12 STEEP strands with full Developing → Approaching
 | **Restore — Replace All** | Imports a backup, overwrites all existing data |
 | **Clear History** | Deletes wins for a specific year or all years, with confirmation |
 
+### 📤 Exports
+
+| Format | Description |
+|--------|-------------|
+| **HTML** | Fully styled dark-themed document matching the app's color scheme. Includes a sticky header, global summary stats (multi-year), per-year breakdowns, and per-quarter tables with colored badges for standard, impact, and proficiency. |
+| **PDF** | Print the app directly — dark theme and all badge colors are preserved via `print-color-adjust`. |
+| **CSV** | Flat data export for current year or all years. |
+| **JSON** | Full backup including metadata, suitable for re-import. |
+
 ---
 
 ## Quarters
@@ -77,9 +87,9 @@ Standard calendar year quarters — no fiscal year logic.
 | Standard | Categories |
 |----------|------------|
 | **Stronger Together** | Recognition Performed *(M)*, Mentoring Sessions, Improve Culture / Face of AW, Pack Unity, Other |
-| **Own the Outcome** | Replicon (Timecard) *(M)*, MSA / Learnamp, Role Certified *(M)*, Office Attendance *(M)* |
-| **Lead the Way** | Innovate / Self Improve / Immersive Labs, Certifications, SPiDRs / Tools / Methods, Brand Awareness, Community Outreach |
-| **Execute** | Recognition Received *(M)*, SPiDRs Performed / Trackable *(M)*, Partnership with AWN Teams *(M)*, Tickets *(M)* |
+| **Own the Outcome** | Replicon (Timecard) *(M)*, MSA / Learnamp, Role Certified *(M)*, Office Attendance *(M)*, Other |
+| **Lead the Way** | Innovate / Self Improve / Immersive Labs, Certifications, SPiDRs / Tools / Methods, Brand Awareness, Community Outreach, Other |
+| **Execute** | Recognition Received *(M)*, SPiDRs Performed / Trackable *(M)*, Partnership with AWN Teams *(M)*, Tickets *(M)*, Other |
 
 > *(M)* = Manager Tracked metric
 
@@ -97,9 +107,9 @@ All data is stored locally in your browser via `localStorage`. Nothing is transm
 
 ---
 
-## Migrating from v1.0
+## Migrating from v1.0 or v2.0
 
-v2.0 automatically detects and migrates data from the old storage keys used in v1.0 (`packWins`, `packWins_v2`), including converting any FY-labeled years (e.g. `FY26`) to calendar years (e.g. `2025`). No manual steps needed — just open the new file.
+v3.0 shares the same `localStorage` keys as v2.0 — just open the new file and your data is already there. It also auto-migrates data from the original v1.0 storage keys (`packWins`, `packWins_v2`), including converting FY-labeled years to calendar years.
 
 ---
 
@@ -113,7 +123,8 @@ Chrome 90+, Firefox 88+, Edge 90+, Safari 14+. Responsive layout works on mobile
 
 ```
 winsTracker/
-├── wins-tracker-v2.0.html   # Full app — single self-contained file
+├── wins-tracker-v3.0.html   # Current version — single self-contained file
+├── wins-tracker-v2.0.html   # Previous version
 └── README.md
 ```
 

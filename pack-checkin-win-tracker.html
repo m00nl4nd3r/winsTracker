@@ -232,13 +232,71 @@ tbody td{padding:11px 13px;font-size:13px;vertical-align:top;max-width:260px;}
 
 /* ── PRINT ── */
 @media print{
-  body{background:#fff;color:#000;} body::before{display:none;}
-  header{background:#fff;border-bottom:2px solid #000;position:static;}
-  .header-titles h1{color:#000;} .tabs,.form-card,.action-bar,.filters-bar,.btn,.btn-add-year,.year-selector-wrap{display:none!important;}
-  .tab-panel{display:block!important;} .table-wrap{border:1px solid #ccc;}
-  tbody tr:hover{background:transparent;} thead th{background:#f0f0f0;color:#333;} tbody td{color:#333;}
-  .badge,.pp{border:1px solid #aaa;color:#333;background:#f5f5f5;}
-  .toast,.modal-backdrop{display:none!important;}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  body{background:#080d17!important;color:#dde8f5!important;margin:0;}
+  body::before{display:none;}
+  header{background:#0a1528!important;border-bottom:2px solid #00c6e0!important;position:static!important;padding:16px 28px!important;}
+  .header-titles h1{color:#fff!important;font-size:16px!important;}
+  .header-titles p{color:#4e6a88!important;}
+  .wolf-icon{background:linear-gradient(135deg,#00c6e0,#0090a8)!important;}
+  .tabs,.form-card,.action-bar,.filters-bar,.btn,.btn-add-year,.year-selector-wrap,.header-right,.q-tabs,.filters-bar,.action-bar{display:none!important;}
+  .tab-panel{display:block!important;page-break-inside:avoid;}
+  main{padding:20px 28px!important;}
+  .year-banner{background:rgba(0,198,224,.06)!important;border-color:rgba(0,198,224,.2)!important;margin-bottom:16px!important;}
+  .ybanner-year{color:#00c6e0!important;} .ybanner-total{color:#8baac8!important;}
+  .rings{grid-template-columns:repeat(4,1fr)!important;gap:10px!important;margin-bottom:16px!important;}
+  .ring-card{background:#0f1623!important;border-color:#1e3050!important;padding:14px!important;}
+  .ring-card.stronger .ring-num{color:#a78bfa!important;} .ring-card.own .ring-num{color:#00c6e0!important;}
+  .ring-card.lead .ring-num{color:#10d98c!important;} .ring-card.execute .ring-num{color:#f59e0b!important;}
+  .ring-title{color:#4e6a88!important;} .ring-sub{color:#4e6a88!important;}
+  .stats-row{grid-template-columns:repeat(4,1fr)!important;gap:10px!important;}
+  .stat-card{background:#0f1623!important;border-color:#1e3050!important;}
+  .stat-card.stronger .stat-value{color:#a78bfa!important;} .stat-card.own .stat-value{color:#00c6e0!important;}
+  .stat-card.lead .stat-value{color:#10d98c!important;} .stat-card.execute .stat-value{color:#f59e0b!important;}
+  .stat-label{color:#4e6a88!important;} .stat-sub{color:#4e6a88!important;}
+  .table-wrap{background:#0f1623!important;border:1px solid #1e3050!important;border-radius:10px!important;overflow:hidden!important;}
+  table{width:100%!important;}
+  thead th{background:#151e2d!important;color:#4e6a88!important;border-bottom:1px solid #1e3050!important;font-size:10px!important;padding:8px 12px!important;}
+  tbody tr{border-bottom:1px solid #1e3050!important;}
+  tbody tr:hover{background:transparent!important;}
+  tbody td{color:#dde8f5!important;padding:9px 12px!important;font-size:12px!important;}
+  .td-main{color:#dde8f5!important;} .td-sub{color:#8baac8!important;font-size:11px!important;} .td-meta{color:#8baac8!important;} .td-mono{color:#4e6a88!important;}
+  .badge{font-size:10px!important;}
+  .b-stronger{background:rgba(124,58,237,.15)!important;color:#a78bfa!important;border-color:rgba(124,58,237,.25)!important;}
+  .b-own{background:rgba(8,145,178,.15)!important;color:#00c6e0!important;border-color:rgba(8,145,178,.25)!important;}
+  .b-lead{background:rgba(5,150,105,.15)!important;color:#10d98c!important;border-color:rgba(5,150,105,.25)!important;}
+  .b-execute{background:rgba(217,119,6,.15)!important;color:#f59e0b!important;border-color:rgba(217,119,6,.25)!important;}
+  .b-q1{background:rgba(99,102,241,.12)!important;color:#818cf8!important;} .b-q2{background:rgba(6,182,212,.12)!important;color:#22d3ee!important;}
+  .b-q3{background:rgba(16,185,129,.12)!important;color:#10d98c!important;} .b-q4{background:rgba(245,158,11,.12)!important;color:#f59e0b!important;}
+  .b-hi{background:rgba(16,217,140,.12)!important;color:#10d98c!important;} .b-med{background:rgba(245,158,11,.12)!important;color:#f59e0b!important;}
+  .b-lo{background:rgba(99,125,170,.12)!important;color:#7f9fc0!important;} .b-mgr{background:rgba(244,63,94,.1)!important;color:#fb7185!important;}
+  .b-year{background:rgba(0,198,224,.1)!important;color:#00c6e0!important;}
+  .pp-dev{background:rgba(244,63,94,.12)!important;color:#fb7185!important;} .pp-app{background:rgba(245,158,11,.12)!important;color:#f59e0b!important;}
+  .pp-pro{background:rgba(16,217,140,.12)!important;color:#10d98c!important;} .pp-exc{background:rgba(0,198,224,.12)!important;color:#00c6e0!important;}
+  .section-title{color:#8baac8!important;border-color:#1e3050!important;font-size:12px!important;}
+  .dash-grid{grid-template-columns:1fr 1fr!important;}
+  .chart-card{background:#0f1623!important;border-color:#1e3050!important;}
+  .chart-card h3{color:#4e6a88!important;}
+  .bar-track{background:#1c2840!important;} .bar-fill{background:#00c6e0!important;}
+  .bar-lbl{color:#8baac8!important;} .bar-n{color:#4e6a88!important;}
+  .ring-card::after{display:none!important;}
+  .toast,.modal-backdrop,.btn-add-year{display:none!important;}
+  .q-tab{display:none!important;}
+  #quarterly-content .section-title{color:#8baac8!important;}
+  .std-card{background:#0f1623!important;border-color:#1e3050!important;}
+  .std-hdr{border-bottom-color:#1e3050!important;}
+  .std-hdr.stronger{background:rgba(124,58,237,.08)!important;} .std-hdr.stronger h3{color:#a78bfa!important;}
+  .std-hdr.own{background:rgba(8,145,178,.08)!important;} .std-hdr.own h3{color:#00c6e0!important;}
+  .std-hdr.lead{background:rgba(5,150,105,.08)!important;} .std-hdr.lead h3{color:#10d98c!important;}
+  .std-hdr.execute{background:rgba(217,119,6,.08)!important;} .std-hdr.execute h3{color:#f59e0b!important;}
+  .std-hdr p{color:#4e6a88!important;}
+  .strand-tbl td{color:#8baac8!important;border-bottom-color:#1e3050!important;font-size:11px!important;}
+  .strand-tbl .sname{background:#151e2d!important;color:#8baac8!important;}
+  .yr-card{background:#0f1623!important;border-color:#1e3050!important;}
+  .yrc-year{color:#00c6e0!important;} .yrc-n{color:#dde8f5!important;} .yrc-sub{color:#4e6a88!important;}
+  .yr-card.current{border-color:#00c6e0!important;background:rgba(0,198,224,.04)!important;}
+  .empty-state{color:#4e6a88!important;}
+  .empty-state h3{color:#8baac8!important;}
 }
 </style>
 </head>
@@ -1368,38 +1426,138 @@ function exportCSV(all){
 }
 
 function exportHTML(){
-  var css="body{font-family:Georgia,serif;max-width:960px;margin:36px auto;color:#1a1a2e;padding:0 20px;}"+
-    "h1{color:#0f3460;font-size:24px;margin-bottom:3px;}.sub{color:#666;font-size:12px;margin-bottom:26px;}"+
-    ".sec{margin-bottom:26px;}h2{color:#0f3460;font-size:17px;border-bottom:2px solid #e8e8e8;padding-bottom:6px;margin-bottom:12px;}"+
-    "h3{color:#334;font-size:14px;margin:14px 0 6px;}table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:14px;}"+
-    "th{background:#0f3460;color:#fff;padding:7px 11px;text-align:left;font-weight:600;}"+
-    "td{padding:7px 11px;border-bottom:1px solid #e8e8e8;vertical-align:top;}tr:nth-child(even)td{background:#f9f9f9;}"+
-    ".ts{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;}"+
-    ".t-stronger{background:#ede9fe;color:#5b21b6;}.t-own{background:#e0f7fa;color:#006d7c;}"+
-    ".t-lead{background:#d1fae5;color:#065f46;}.t-execute{background:#fef3c7;color:#78350f;}.m{color:#666;font-size:11px;}";
-
+  var ql={Q1:"Jan\u2013Mar",Q2:"Apr\u2013Jun",Q3:"Jul\u2013Sep",Q4:"Oct\u2013Dec"};
   var sn={stronger:"Stronger Together",own:"Own the Outcome",lead:"Lead the Way",execute:"Execute"};
-  var body="<h1>&#x1F43A; Pack Check-In Win Tracker</h1><div class=\"sub\">Exported "+new Date().toLocaleDateString()+"</div>";
+  var sc={stronger:"#a78bfa",own:"#00c6e0",lead:"#10d98c",execute:"#f59e0b"};
+  var sbg={stronger:"rgba(124,58,237,.15)",own:"rgba(8,145,178,.15)",lead:"rgba(5,150,105,.15)",execute:"rgba(217,119,6,.15)"};
+  var sbdr={stronger:"rgba(124,58,237,.3)",own:"rgba(8,145,178,.3)",lead:"rgba(5,150,105,.3)",execute:"rgba(217,119,6,.3)"};
+  var ic={High:{bg:"rgba(16,217,140,.12)",c:"#10d98c",b:"rgba(16,217,140,.2)"},
+          Medium:{bg:"rgba(245,158,11,.12)",c:"#f59e0b",b:"rgba(245,158,11,.2)"},
+          Low:{bg:"rgba(99,125,170,.12)",c:"#7f9fc0",b:"rgba(99,125,170,.15)"}};
+  var pc={Developing:{bg:"rgba(244,63,94,.12)",c:"#fb7185"},Approaching:{bg:"rgba(245,158,11,.12)",c:"#f59e0b"},
+          Proficient:{bg:"rgba(16,217,140,.12)",c:"#10d98c"},Exceeds:{bg:"rgba(0,198,224,.12)",c:"#00c6e0"}};
+
+  function badge(label,bg,color,border){
+    return "<span style=\"display:inline-flex;align-items:center;padding:2px 8px;border-radius:5px;font-size:10px;font-weight:700;letter-spacing:.3px;background:"+bg+";color:"+color+";border:1px solid "+(border||"transparent")+";white-space:nowrap;\">"+label+"</span>";
+  }
+  function ibadge(i){ var d=ic[i]||ic.Low; return badge(i||"\u2014",d.bg,d.c,d.b); }
+  function pbadge(p){ var d=pc[p]; return d?badge(p,d.bg,d.c,"transparent"):"<span style=\"color:#4e6a88;\">\u2014</span>"; }
+  function sbadge(s){ return badge(sn[s]||s,sbg[s]||"#222",sc[s]||"#ccc",sbdr[s]||"#444"); }
+
+  var totalWins=wins.length;
+  var exportDate=new Date().toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"});
+
+  // Summary stats
+  var allStdCounts={stronger:0,own:0,lead:0,execute:0};
+  wins.forEach(function(w){allStdCounts[w.standard]=(allStdCounts[w.standard]||0)+1;});
+
+  var statsHtml="<div style=\"display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:32px;\">";
+  ["stronger","own","lead","execute"].forEach(function(s){
+    statsHtml+="<div style=\"background:#0f1623;border:1px solid "+sbdr[s]+";border-radius:10px;padding:16px;border-top:3px solid "+sc[s]+";\">"+
+      "<div style=\"font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#4e6a88;margin-bottom:6px;\">"+sn[s]+"</div>"+
+      "<div style=\"font-family:'Rajdhani',sans-serif;font-size:36px;font-weight:700;color:"+sc[s]+";line-height:1;\">"+allStdCounts[s]+"</div>"+
+      "<div style=\"font-size:11px;color:#4e6a88;margin-top:2px;\">wins</div></div>";
+  });
+  statsHtml+="</div>";
+
+  var body="";
   years.slice().reverse().forEach(function(yr){
     var yw=winsFor(yr);if(!yw.length)return;
-    body+="<div class=\"sec\"><h2>"+yr+" &mdash; "+yw.length+" wins</h2>";
+    var ystdCounts={stronger:0,own:0,lead:0,execute:0};
+    yw.forEach(function(w){ystdCounts[w.standard]=(ystdCounts[w.standard]||0)+1;});
+
+    body+="<div style=\"margin-bottom:48px;\">";
+    // Year header bar
+    body+="<div style=\"display:flex;align-items:center;gap:16px;padding:14px 20px;background:rgba(0,198,224,.04);border:1px solid rgba(0,198,224,.12);border-radius:10px;margin-bottom:20px;\">"+
+      "<div style=\"font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:#00c6e0;letter-spacing:1px;\">"+yr+"</div>"+
+      "<div style=\"flex:1;\"><div style=\"font-size:11px;color:#4e6a88;letter-spacing:1px;text-transform:uppercase;\">Calendar Year &middot; Performance Record</div></div>"+
+      "<div style=\"font-family:'Rajdhani',sans-serif;font-size:16px;color:#8baac8;\">"+yw.length+" wins</div></div>";
+
+    // Mini year stats
+    body+="<div style=\"display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:24px;\">";
+    ["stronger","own","lead","execute"].forEach(function(s){
+      body+="<div style=\"background:#0f1623;border:1px solid #1e3050;border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:10px;\">"+
+        "<div style=\"width:3px;height:30px;background:"+sc[s]+";border-radius:2px;flex-shrink:0;\"></div>"+
+        "<div><div style=\"font-size:10px;color:#4e6a88;font-weight:700;letter-spacing:1px;text-transform:uppercase;\">"+sn[s]+"</div>"+
+        "<div style=\"font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:"+sc[s]+";line-height:1.2;\">"+ystdCounts[s]+"</div></div></div>";
+    });
+    body+="</div>";
+
     ["Q1","Q2","Q3","Q4"].forEach(function(q){
       var qw=yw.filter(function(w){return w.quarter===q;});if(!qw.length)return;
-      var ql={Q1:"Jan&ndash;Mar",Q2:"Apr&ndash;Jun",Q3:"Jul&ndash;Sep",Q4:"Oct&ndash;Dec"};
-      body+="<h3>"+q+" &middot; "+ql[q]+" &mdash; "+qw.length+" wins</h3>"+
-        "<table><thead><tr><th>Date</th><th>Standard</th><th>Category</th><th>Title</th><th>Description</th><th>Impact</th><th>Proficiency</th></tr></thead><tbody>"+
-        qw.map(function(w){
-          return "<tr><td class=\"m\">"+w.date+"</td>"+
-            "<td><span class=\"ts t-"+w.standard+"\">"+(sn[w.standard]||w.standard)+"</span></td>"+
-            "<td class=\"m\">"+w.categoryLabel+(w.managed?" (M)":"")+"</td>"+
-            "<td><strong>"+w.title+"</strong>"+(w.metric?"<br><span class=\"m\">"+w.metric+"</span>":"")+"</td>"+
-            "<td>"+w.desc+"</td><td>"+(w.impact||"")+"</td><td>"+(w.proficiency||"&mdash;")+"</td></tr>";
-        }).join("")+"</tbody></table>";
+      var qc={Q1:"#818cf8",Q2:"#22d3ee",Q3:"#10d98c",Q4:"#f59e0b"};
+      var qbg={Q1:"rgba(99,102,241,.1)",Q2:"rgba(6,182,212,.1)",Q3:"rgba(16,185,129,.1)",Q4:"rgba(245,158,11,.1)"};
+
+      body+="<div style=\"margin-bottom:28px;\">"+
+        "<div style=\"display:flex;align-items:center;gap:10px;margin-bottom:14px;\">"+
+          "<div style=\"font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:"+qc[q]+";\">"+q+"</div>"+
+          "<div style=\"font-size:12px;color:#4e6a88;\">"+ql[q]+"</div>"+
+          "<div style=\"flex:1;height:1px;background:#1e3050;\"></div>"+
+          "<div style=\"background:"+qbg[q]+";color:"+qc[q]+";border:1px solid "+qc[q]+"33;border-radius:5px;padding:2px 10px;font-size:11px;font-weight:700;\">"+qw.length+" wins</div>"+
+        "</div>";
+
+      body+="<div style=\"background:#0f1623;border:1px solid #1e3050;border-radius:10px;overflow:hidden;\">"+
+        "<table style=\"width:100%;border-collapse:collapse;\">"+
+        "<thead><tr>"+
+          "<th style=\"background:#151e2d;padding:9px 13px;text-align:left;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#4e6a88;border-bottom:1px solid #1e3050;width:80px;\">Date</th>"+
+          "<th style=\"background:#151e2d;padding:9px 13px;text-align:left;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#4e6a88;border-bottom:1px solid #1e3050;\">Standard</th>"+
+          "<th style=\"background:#151e2d;padding:9px 13px;text-align:left;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#4e6a88;border-bottom:1px solid #1e3050;\">Category</th>"+
+          "<th style=\"background:#151e2d;padding:9px 13px;text-align:left;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#4e6a88;border-bottom:1px solid #1e3050;\">Title &amp; Description</th>"+
+          "<th style=\"background:#151e2d;padding:9px 13px;text-align:left;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#4e6a88;border-bottom:1px solid #1e3050;width:70px;\">Impact</th>"+
+          "<th style=\"background:#151e2d;padding:9px 13px;text-align:left;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#4e6a88;border-bottom:1px solid #1e3050;width:85px;\">Proficiency</th>"+
+        "</tr></thead><tbody>"+
+        qw.map(function(w,i){
+          var rowbg=i%2===0?"transparent":"rgba(255,255,255,.015)";
+          return "<tr style=\"border-bottom:1px solid #1e3050;background:"+rowbg+";\">"+
+            "<td style=\"padding:11px 13px;font-family:monospace;font-size:11px;color:#4e6a88;vertical-align:top;\">"+w.date+"</td>"+
+            "<td style=\"padding:11px 13px;vertical-align:top;\">"+sbadge(w.standard)+"</td>"+
+            "<td style=\"padding:11px 13px;vertical-align:top;\">"+
+              "<div style=\"font-size:12px;color:#8baac8;\">"+esc(w.categoryLabel)+"</div>"+
+              (w.managed?"<span style=\"display:inline-block;margin-top:3px;padding:1px 6px;border-radius:4px;font-size:9px;font-weight:700;background:rgba(244,63,94,.1);color:#fb7185;border:1px solid rgba(244,63,94,.2);\">Manager</span>":"")+
+              (w.metric?"<div style=\"margin-top:4px;font-family:monospace;font-size:10px;color:#f59e0b;\">"+esc(w.metric)+"</div>":"")+
+            "</td>"+
+            "<td style=\"padding:11px 13px;vertical-align:top;max-width:320px;\">"+
+              "<div style=\"font-size:13px;font-weight:600;color:#dde8f5;margin-bottom:4px;\">"+esc(w.title)+"</div>"+
+              "<div style=\"font-size:12px;color:#8baac8;line-height:1.55;\">"+esc(w.desc)+"</div>"+
+            "</td>"+
+            "<td style=\"padding:11px 13px;vertical-align:top;\">"+ibadge(w.impact)+"</td>"+
+            "<td style=\"padding:11px 13px;vertical-align:top;\">"+pbadge(w.proficiency)+"</td>"+
+          "</tr>";
+        }).join("")+
+        "</tbody></table></div></div>";
     });
     body+="</div>";
   });
-  dlFile("pack-wins-export.html","text/html",
-    "<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><title>Pack Check-In Wins</title><style>"+css+"</style></head><body>"+body+"</body></html>");
+
+  var css="@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');"+
+    "*{box-sizing:border-box;margin:0;padding:0;}"+
+    "body{background:#080d17;color:#dde8f5;font-family:'IBM Plex Sans',sans-serif;font-size:14px;padding:0;margin:0;}"+
+    "body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,198,224,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,198,224,.025) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0;}"+
+    ".wrap{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 0 60px;}"+
+    ".page-header{background:linear-gradient(90deg,#0a1528,#080d17 50%,#0a1528);border-bottom:1px solid #1e3050;padding:20px 40px;display:flex;align-items:center;gap:14px;margin-bottom:40px;position:sticky;top:0;backdrop-filter:blur(12px);z-index:10;}"+
+    ".wolf{width:38px;height:38px;background:linear-gradient(135deg,#00c6e0,#0090a8);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 0 20px rgba(0,198,224,.3);flex-shrink:0;}"+
+    ".ph-title{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;letter-spacing:1.5px;color:#fff;text-transform:uppercase;}"+
+    ".ph-sub{font-size:10px;color:#4e6a88;letter-spacing:2px;text-transform:uppercase;font-family:'IBM Plex Mono',monospace;margin-top:1px;}"+
+    ".ph-right{margin-left:auto;text-align:right;}"+
+    ".ph-date{font-size:11px;color:#4e6a88;font-family:'IBM Plex Mono',monospace;}"+
+    ".ph-count{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:#00c6e0;}"+
+    ".inner{padding:0 40px;}";
+
+  var html="<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\">"+
+    "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">"+
+    "<title>Win Tracker Export &mdash; "+exportDate+"</title>"+
+    "<style>"+css+"</style></head><body>"+
+    "<div class=\"page-header\">"+
+      "<div class=\"wolf\">\uD83D\uDC3A</div>"+
+      "<div><div class=\"ph-title\">Win Tracker</div><div class=\"ph-sub\">STEEP Performance Framework</div></div>"+
+      "<div class=\"ph-right\"><div class=\"ph-count\">"+totalWins+" wins</div><div class=\"ph-date\">Exported "+exportDate+"</div></div>"+
+    "</div>"+
+    "<div class=\"wrap\"><div class=\"inner\">"+
+    (years.length>1?statsHtml:"")+
+    body+
+    "</div></div></body></html>";
+
+  dlFile("win-tracker-export-"+new Date().toISOString().slice(0,10)+".html","text/html",html);
 }
 
 function exportPDF(){window.print();}
