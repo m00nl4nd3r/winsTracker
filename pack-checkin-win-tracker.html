@@ -307,7 +307,7 @@ tbody td{padding:11px 13px;font-size:13px;vertical-align:top;max-width:260px;}
   <div class="form-card">
     <div class="section-title">Log a New Win</div>
     <div class="form-row form-row-4">
-      <div class="form-group"><label>Year</label><select id="f-year"></select></div>
+      <div class="form-group"><label>Year</label><select id="f-year" onchange="document.getElementById('f-date').value=defaultDateForYear(this.value)"></select></div>
       <div class="form-group"><label>Quarter</label>
         <select id="f-quarter">
           <option value="">&#x2014; Quarter &#x2014;</option>
@@ -622,20 +622,23 @@ var CATS = {
     {key:"replicon",label:"Replicon (Timecard)",managed:true},
     {key:"msa_learnamp",label:"MSA / Learnamp",managed:false},
     {key:"role_certified",label:"Role Certified",managed:true},
-    {key:"office_attendance",label:"Office Attendance",managed:true}
+    {key:"office_attendance",label:"Office Attendance",managed:true},
+    {key:"other_own",label:"Other (Own the Outcome)",managed:false}
   ],
   lead:[
     {key:"innovate_self_improve",label:"Innovate / Self Improve / Immersive Labs",managed:false},
     {key:"certs",label:"Certifications",managed:false},
     {key:"spidrs_tools",label:"SPiDRs / Tools / Methods / Etc",managed:false},
     {key:"brand_awareness",label:"Brand Awareness",managed:false},
-    {key:"community_outreach",label:"Community Outreach",managed:false}
+    {key:"community_outreach",label:"Community Outreach",managed:false},
+    {key:"other_lead",label:"Other (Lead the Way)",managed:false}
   ],
   execute:[
     {key:"recognition_received",label:"Recognition Received",managed:true},
     {key:"spidrs_performed",label:"SPiDRs Performed / Trackable",managed:true},
     {key:"partnership_awn_teams",label:"Partnership with AWN Teams (SIR, PS, TI, SPIDR 2.0)",managed:true},
-    {key:"tickets",label:"Tickets",managed:true}
+    {key:"tickets",label:"Tickets",managed:true},
+    {key:"other_execute",label:"Other (Execute)",managed:false}
   ]
 };
 var SMETA={
@@ -766,7 +769,7 @@ var pendingImportData = null, pendingClearYear = null;
 
 /* ── BOOT ───────────────────────────────────────────────────────────────── */
 document.addEventListener("DOMContentLoaded",function(){
-  document.getElementById("f-date").value = new Date().toISOString().split("T")[0];
+  document.getElementById("f-date").value = defaultDateForYear(document.getElementById("f-year").value);
   renderStandards();
   rebuildSelectors();
   renderAll();
@@ -859,6 +862,14 @@ function updateCats(){
 }
 
 /* ── ADD WIN ────────────────────────────────────────────────────────────── */
+function defaultDateForYear(yr){
+  var today = new Date();
+  var todayYr = today.getFullYear().toString();
+  if(!yr || yr === todayYr) return today.toISOString().split("T")[0];
+  // Past year: default to Dec 31. Future year: default to Jan 1.
+  return parseInt(yr) < parseInt(todayYr) ? yr+"-12-31" : yr+"-01-01";
+}
+
 function addWin(){
   var yr   = document.getElementById("f-year").value;
   var q    = document.getElementById("f-quarter").value;
@@ -897,7 +908,7 @@ function clearForm(){
   document.getElementById("f-standard").value="";
   document.getElementById("f-category").innerHTML="<option value=\"\">&#x2014; Select Standard first &#x2014;</option>";
   document.getElementById("f-quarter").value="";
-  document.getElementById("f-date").value=new Date().toISOString().split("T")[0];
+  document.getElementById("f-date").value=defaultDateForYear(document.getElementById("f-year").value);
   document.getElementById("f-title").value="";
   document.getElementById("f-desc").value="";
   document.getElementById("f-impact").value="Medium";
