@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pack Check-In Win Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#080d17; --surface:#0f1623; --surface2:#151e2d; --surface3:#1c2840;
+  --border:#1e3050; --border2:#2a4060;
+  --primary:#00c6e0; --primary-dim:#0090a8;
+  --amber:#f59e0b; --green:#10d98c; --green-dim:#0a9e65; --red:#f43f5e;
+  --text:#dde8f5; --text2:#8baac8; --text3:#4e6a88;
+  --stronger:#7c3aed; --own:#0891b2; --lead:#059669; --execute:#d97706;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:14px;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,198,224,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,198,224,.03) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0;}
+.app{position:relative;z-index:1;display:flex;flex-direction:column;min-height:100vh;}
+
+/* ── HEADER ── */
+header{background:linear-gradient(90deg,#0a1528,#080d17 50%,#0a1528);border-bottom:1px solid var(--border);padding:0 28px;display:flex;align-items:center;justify-content:space-between;min-height:64px;position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);gap:12px;flex-wrap:wrap;}
+.header-brand{display:flex;align-items:center;gap:12px;}
+.wolf-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--primary),var(--primary-dim));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;box-shadow:0 0 20px rgba(0,198,224,.3);}
+.header-titles h1{font-family:'Rajdhani',sans-serif;font-size:19px;font-weight:700;letter-spacing:1.5px;color:#fff;text-transform:uppercase;}
+.header-titles p{font-size:10px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;font-family:'IBM Plex Mono',monospace;}
+.header-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.year-selector-wrap{display:flex;align-items:center;gap:6px;}
+.year-selector-wrap label{font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace;letter-spacing:1px;text-transform:uppercase;}
+#header-year{background:var(--surface2);border:1px solid var(--border2);color:var(--primary);padding:4px 10px;border-radius:20px;font-size:12px;font-family:'IBM Plex Mono',monospace;letter-spacing:1px;cursor:pointer;width:auto;appearance:none;}
+.btn-add-year{background:transparent;border:1px dashed var(--border2);color:var(--text3);padding:4px 10px;border-radius:20px;font-size:11px;font-family:'IBM Plex Mono',monospace;cursor:pointer;transition:all .2s;}
+.btn-add-year:hover{border-color:var(--primary-dim);color:var(--primary);}
+
+/* ── TABS ── */
+.tabs{background:var(--surface);border-bottom:1px solid var(--border);padding:0 28px;display:flex;gap:2px;overflow-x:auto;}
+.tab-btn{background:transparent;border:none;color:var(--text3);padding:13px 16px;font-family:'IBM Plex Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;letter-spacing:.4px;display:flex;align-items:center;gap:6px;white-space:nowrap;}
+.tab-btn:hover{color:var(--text2);}
+.tab-btn.active{color:var(--primary);border-bottom-color:var(--primary);}
+.tab-btn .cnt{background:var(--surface3);color:var(--text2);border-radius:10px;padding:1px 6px;font-size:10px;font-family:'IBM Plex Mono',monospace;}
+.tab-btn.active .cnt{background:rgba(0,198,224,.15);color:var(--primary);}
+
+/* ── MAIN ── */
+main{flex:1;padding:24px 28px;max-width:1400px;width:100%;margin:0 auto;}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+/* ── YEAR BANNER ── */
+.year-banner{display:flex;align-items:center;gap:12px;margin-bottom:20px;padding:12px 18px;background:rgba(0,198,224,.04);border:1px solid rgba(0,198,224,.1);border-radius:10px;}
+.ybanner-year{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--primary);letter-spacing:1px;}
+.ybanner-label{font-size:12px;color:var(--text3);flex:1;}
+.ybanner-total{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--text2);}
+
+/* ── STAT CARDS ── */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;position:relative;overflow:hidden;transition:border-color .2s;}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.stat-card.stronger::before{background:var(--stronger);}
+.stat-card.own::before{background:var(--own);}
+.stat-card.lead::before{background:var(--lead);}
+.stat-card.execute::before{background:var(--execute);}
+.stat-card:hover{border-color:var(--border2);}
+.stat-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);margin-bottom:6px;}
+.stat-value{font-family:'Rajdhani',sans-serif;font-size:34px;font-weight:700;line-height:1;margin-bottom:2px;}
+.stat-card.stronger .stat-value{color:#a78bfa;}
+.stat-card.own .stat-value{color:var(--primary);}
+.stat-card.lead .stat-value{color:var(--green);}
+.stat-card.execute .stat-value{color:var(--amber);}
+.stat-sub{font-size:11px;color:var(--text3);}
+
+/* ── SECTION TITLE ── */
+.section-title{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* ── FORM ── */
+.form-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:24px;}
+.form-row{display:grid;gap:14px;margin-bottom:14px;}
+.form-row-4{grid-template-columns:1fr 1fr 1fr 1fr;}
+.form-row-3{grid-template-columns:1fr 1fr 1fr;}
+.form-row-2{grid-template-columns:1fr 1fr;}
+.form-group{display:flex;flex-direction:column;gap:5px;}
+label{font-size:10px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);}
+input,select,textarea{background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:8px 12px;font-family:'IBM Plex Sans',sans-serif;font-size:13px;transition:border-color .2s,box-shadow .2s;width:100%;appearance:none;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--primary-dim);box-shadow:0 0 0 3px rgba(0,198,224,.08);}
+textarea{resize:vertical;min-height:80px;}
+select option{background:var(--surface2);}
+.form-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 20px;border-radius:8px;border:none;font-family:'IBM Plex Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;letter-spacing:.3px;white-space:nowrap;}
+.btn-primary{background:var(--primary);color:#050c17;}
+.btn-primary:hover{background:#00d8f5;box-shadow:0 0 16px rgba(0,198,224,.3);}
+.btn-outline{background:transparent;border:1px solid var(--border2);color:var(--text2);}
+.btn-outline:hover{border-color:var(--primary-dim);color:var(--primary);}
+.btn-danger-outline{background:transparent;border:1px solid rgba(244,63,94,.3);color:var(--red);}
+.btn-danger-outline:hover{background:rgba(244,63,94,.08);}
+.btn-sm{padding:6px 14px;font-size:12px;}
+.btn-xs{padding:4px 10px;font-size:11px;}
+
+/* ── EXPORT / DATA BAR ── */
+.action-bar{display:flex;align-items:center;gap:8px;margin-bottom:18px;flex-wrap:wrap;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;}
+.action-bar-label{font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);margin-right:4px;}
+.action-bar-divider{width:1px;height:20px;background:var(--border2);margin:0 4px;}
+
+/* ── FILTERS ── */
+.filters-bar{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;align-items:center;}
+.filters-bar select,.filters-bar input{width:auto;min-width:120px;}
+
+/* ── TABLE ── */
+.table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+table{width:100%;border-collapse:collapse;}
+thead th{background:var(--surface2);padding:10px 13px;text-align:left;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none;}
+thead th:hover{color:var(--text2);}
+tbody tr{border-bottom:1px solid var(--border);transition:background .15s;}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:var(--surface2);}
+tbody td{padding:11px 13px;font-size:13px;vertical-align:top;max-width:260px;}
+.td-main{color:var(--text);line-height:1.5;word-break:break-word;}
+.td-sub{font-size:11px;color:var(--text3);line-height:1.4;word-break:break-word;margin-top:3px;}
+.td-meta{color:var(--text3);font-size:12px;}
+.td-mono{font-family:'IBM Plex Mono',monospace;color:var(--text3);font-size:11px;white-space:nowrap;}
+
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:5px;font-size:11px;font-weight:600;letter-spacing:.2px;white-space:nowrap;}
+.b-stronger{background:rgba(124,58,237,.15);color:#a78bfa;border:1px solid rgba(124,58,237,.25);}
+.b-own{background:rgba(8,145,178,.15);color:var(--primary);border:1px solid rgba(8,145,178,.25);}
+.b-lead{background:rgba(5,150,105,.15);color:var(--green);border:1px solid rgba(5,150,105,.25);}
+.b-execute{background:rgba(217,119,6,.15);color:var(--amber);border:1px solid rgba(217,119,6,.25);}
+.b-q1{background:rgba(99,102,241,.12);color:#818cf8;border:1px solid rgba(99,102,241,.2);}
+.b-q2{background:rgba(6,182,212,.12);color:#22d3ee;border:1px solid rgba(6,182,212,.2);}
+.b-q3{background:rgba(16,185,129,.12);color:var(--green);border:1px solid rgba(16,185,129,.2);}
+.b-q4{background:rgba(245,158,11,.12);color:var(--amber);border:1px solid rgba(245,158,11,.2);}
+.b-hi{background:rgba(16,217,140,.12);color:var(--green);border:1px solid rgba(16,217,140,.2);}
+.b-med{background:rgba(245,158,11,.12);color:var(--amber);border:1px solid rgba(245,158,11,.2);}
+.b-lo{background:rgba(99,125,170,.12);color:#7f9fc0;border:1px solid rgba(99,125,170,.15);}
+.b-mgr{background:rgba(244,63,94,.1);color:#fb7185;border:1px solid rgba(244,63,94,.15);font-size:10px;}
+.b-year{background:rgba(0,198,224,.1);color:var(--primary);border:1px solid rgba(0,198,224,.2);font-family:'IBM Plex Mono',monospace;font-size:10px;}
+.pp{display:inline-block;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
+.pp-dev{background:rgba(244,63,94,.12);color:#fb7185;}
+.pp-app{background:rgba(245,158,11,.12);color:var(--amber);}
+.pp-pro{background:rgba(16,217,140,.12);color:var(--green);}
+.pp-exc{background:rgba(0,198,224,.12);color:var(--primary);}
+
+/* ── EMPTY ── */
+.empty-state{text-align:center;padding:50px 40px;color:var(--text3);}
+.empty-state .icon{font-size:36px;margin-bottom:12px;}
+.empty-state h3{font-size:17px;color:var(--text2);margin-bottom:6px;font-family:'Rajdhani',sans-serif;letter-spacing:1px;}
+.empty-state p{font-size:13px;line-height:1.6;}
+
+/* ── QUARTERLY ── */
+.q-tabs{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
+.q-tab{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:7px 16px;color:var(--text2);font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;font-family:'IBM Plex Sans',sans-serif;}
+.q-tab:hover{border-color:var(--border2);}
+.q-tab.active{border-color:var(--primary-dim);color:var(--primary);background:rgba(0,198,224,.06);}
+
+/* ── STANDARDS ── */
+.standards-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.std-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.std-hdr{padding:16px 20px;border-bottom:1px solid var(--border);}
+.std-hdr.stronger{background:rgba(124,58,237,.08);border-bottom-color:rgba(124,58,237,.15);}
+.std-hdr.own{background:rgba(8,145,178,.08);border-bottom-color:rgba(8,145,178,.15);}
+.std-hdr.lead{background:rgba(5,150,105,.08);border-bottom-color:rgba(5,150,105,.15);}
+.std-hdr.execute{background:rgba(217,119,6,.08);border-bottom-color:rgba(217,119,6,.15);}
+.std-hdr h3{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;letter-spacing:1px;}
+.std-hdr.stronger h3{color:#a78bfa;}
+.std-hdr.own h3{color:var(--primary);}
+.std-hdr.lead h3{color:var(--green);}
+.std-hdr.execute h3{color:var(--amber);}
+.std-hdr p{font-size:11px;color:var(--text3);margin-top:2px;}
+.strand-tbl{width:100%;}
+.strand-tbl td{padding:8px 13px;font-size:12px;border-bottom:1px solid var(--border);line-height:1.5;}
+.strand-tbl tr:last-child td{border-bottom:none;}
+.strand-tbl .sname{font-weight:600;color:var(--text2);width:26%;background:var(--surface2);}
+.strand-tbl .lcell{color:var(--text3);width:18.5%;}
+
+/* ── DASHBOARD CHARTS ── */
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:24px;}
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;}
+.chart-card h3{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:16px;}
+.bar-chart{display:flex;flex-direction:column;gap:9px;}
+.bar-row{display:grid;grid-template-columns:110px 1fr 32px;gap:8px;align-items:center;}
+.bar-lbl{font-size:11px;color:var(--text2);text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bar-track{height:9px;background:var(--surface3);border-radius:5px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:5px;transition:width .8s cubic-bezier(.23,1,.32,1);}
+.bar-n{font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace;text-align:right;}
+
+/* ── RINGS ── */
+.rings{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
+.ring-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 14px;text-align:center;position:relative;overflow:hidden;}
+.ring-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;}
+.ring-card.stronger::after{background:linear-gradient(90deg,var(--stronger),#a78bfa);}
+.ring-card.own::after{background:linear-gradient(90deg,var(--own),var(--primary));}
+.ring-card.lead::after{background:linear-gradient(90deg,var(--lead),var(--green));}
+.ring-card.execute::after{background:linear-gradient(90deg,var(--execute),var(--amber));}
+.ring-title{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:10px;}
+.ring-num{font-family:'Rajdhani',sans-serif;font-size:38px;font-weight:700;line-height:1;margin-bottom:3px;}
+.ring-card.stronger .ring-num{color:#a78bfa;}
+.ring-card.own .ring-num{color:var(--primary);}
+.ring-card.lead .ring-num{color:var(--green);}
+.ring-card.execute .ring-num{color:var(--amber);}
+.ring-sub{font-size:11px;color:var(--text3);}
+
+/* ── ALL YEARS ── */
+.year-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:24px;}
+.yr-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .2s;}
+.yr-card:hover{border-color:var(--primary-dim);}
+.yr-card.current{border-color:var(--primary-dim);background:rgba(0,198,224,.04);}
+.yrc-year{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--primary);}
+.yrc-n{font-size:22px;font-family:'Rajdhani',sans-serif;font-weight:700;color:var(--text);margin:3px 0;}
+.yrc-sub{font-size:11px;color:var(--text3);}
+
+/* ── MODAL ── */
+.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center;}
+.modal-backdrop.open{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:28px;width:440px;max-width:95vw;}
+.modal h3{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;margin-bottom:6px;color:var(--text);}
+.modal .modal-sub{font-size:12px;color:var(--text3);margin-bottom:20px;}
+.modal-actions{display:flex;gap:10px;margin-top:20px;justify-content:flex-end;}
+.modal-danger h3{color:var(--red);}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface2);border:1px solid var(--green-dim);color:var(--green);padding:11px 18px;border-radius:10px;font-size:13px;font-weight:500;z-index:999;animation:sUp .3s ease;display:flex;align-items:center;gap:8px;box-shadow:0 8px 32px rgba(0,0,0,.4);}
+@keyframes sUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  main{padding:14px;} header{padding:10px 14px;min-height:auto;} .tabs{padding:0 14px;}
+  .stats-row{grid-template-columns:repeat(2,1fr);} .dash-grid{grid-template-columns:1fr;}
+  .standards-grid{grid-template-columns:1fr;} .rings{grid-template-columns:repeat(2,1fr);}
+  .form-row-4,.form-row-3{grid-template-columns:1fr 1fr;} .form-row-2{grid-template-columns:1fr;}
+}
+
+/* ── PRINT ── */
+@media print{
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  body{background:#080d17!important;color:#dde8f5!important;margin:0;}
+  body::before{display:none;}
+  header{background:#0a1528!important;border-bottom:2px solid #00c6e0!important;position:static!important;padding:16px 28px!important;}
+  .header-titles h1{color:#fff!important;font-size:16px!important;}
+  .header-titles p{color:#4e6a88!important;}
+  .wolf-icon{background:linear-gradient(135deg,#00c6e0,#0090a8)!important;}
+  .tabs,.form-card,.action-bar,.filters-bar,.btn,.btn-add-year,.year-selector-wrap,.header-right,.q-tabs,.filters-bar,.action-bar{display:none!important;}
+  .tab-panel{display:block!important;page-break-inside:avoid;}
+  main{padding:20px 28px!important;}
+  .year-banner{background:rgba(0,198,224,.06)!important;border-color:rgba(0,198,224,.2)!important;margin-bottom:16px!important;}
+  .ybanner-year{color:#00c6e0!important;} .ybanner-total{color:#8baac8!important;}
+  .rings{grid-template-columns:repeat(4,1fr)!important;gap:10px!important;margin-bottom:16px!important;}
+  .ring-card{background:#0f1623!important;border-color:#1e3050!important;padding:14px!important;}
+  .ring-card.stronger .ring-num{color:#a78bfa!important;} .ring-card.own .ring-num{color:#00c6e0!important;}
+  .ring-card.lead .ring-num{color:#10d98c!important;} .ring-card.execute .ring-num{color:#f59e0b!important;}
+  .ring-title{color:#4e6a88!important;} .ring-sub{color:#4e6a88!important;}
+  .stats-row{grid-template-columns:repeat(4,1fr)!important;gap:10px!important;}
+  .stat-card{background:#0f1623!important;border-color:#1e3050!important;}
+  .stat-card.stronger .stat-value{color:#a78bfa!important;} .stat-card.own .stat-value{color:#00c6e0!important;}
+  .stat-card.lead .stat-value{color:#10d98c!important;} .stat-card.execute .stat-value{color:#f59e0b!important;}
+  .stat-label{color:#4e6a88!important;} .stat-sub{color:#4e6a88!important;}
+  .table-wrap{background:#0f1623!important;border:1px solid #1e3050!important;border-radius:10px!important;overflow:hidden!important;}
+  table{width:100%!important;}
+  thead th{background:#151e2d!important;color:#4e6a88!important;border-bottom:1px solid #1e3050!important;font-size:10px!important;padding:8px 12px!important;}
+  tbody tr{border-bottom:1px solid #1e3050!important;}
+  tbody tr:hover{background:transparent!important;}
+  tbody td{color:#dde8f5!important;padding:9px 12px!important;font-size:12px!important;}
+  .td-main{color:#dde8f5!important;} .td-sub{color:#8baac8!important;font-size:11px!important;} .td-meta{color:#8baac8!important;} .td-mono{color:#4e6a88!important;}
+  .badge{font-size:10px!important;}
+  .b-stronger{background:rgba(124,58,237,.15)!important;color:#a78bfa!important;border-color:rgba(124,58,237,.25)!important;}
+  .b-own{background:rgba(8,145,178,.15)!important;color:#00c6e0!important;border-color:rgba(8,145,178,.25)!important;}
+  .b-lead{background:rgba(5,150,105,.15)!important;color:#10d98c!important;border-color:rgba(5,150,105,.25)!important;}
+  .b-execute{background:rgba(217,119,6,.15)!important;color:#f59e0b!important;border-color:rgba(217,119,6,.25)!important;}
+  .b-q1{background:rgba(99,102,241,.12)!important;color:#818cf8!important;} .b-q2{background:rgba(6,182,212,.12)!important;color:#22d3ee!important;}
+  .b-q3{background:rgba(16,185,129,.12)!important;color:#10d98c!important;} .b-q4{background:rgba(245,158,11,.12)!important;color:#f59e0b!important;}
+  .b-hi{background:rgba(16,217,140,.12)!important;color:#10d98c!important;} .b-med{background:rgba(245,158,11,.12)!important;color:#f59e0b!important;}
+  .b-lo{background:rgba(99,125,170,.12)!important;color:#7f9fc0!important;} .b-mgr{background:rgba(244,63,94,.1)!important;color:#fb7185!important;}
+  .b-year{background:rgba(0,198,224,.1)!important;color:#00c6e0!important;}
+  .pp-dev{background:rgba(244,63,94,.12)!important;color:#fb7185!important;} .pp-app{background:rgba(245,158,11,.12)!important;color:#f59e0b!important;}
+  .pp-pro{background:rgba(16,217,140,.12)!important;color:#10d98c!important;} .pp-exc{background:rgba(0,198,224,.12)!important;color:#00c6e0!important;}
+  .section-title{color:#8baac8!important;border-color:#1e3050!important;font-size:12px!important;}
+  .dash-grid{grid-template-columns:1fr 1fr!important;}
+  .chart-card{background:#0f1623!important;border-color:#1e3050!important;}
+  .chart-card h3{color:#4e6a88!important;}
+  .bar-track{background:#1c2840!important;} .bar-fill{background:#00c6e0!important;}
+  .bar-lbl{color:#8baac8!important;} .bar-n{color:#4e6a88!important;}
+  .ring-card::after{display:none!important;}
+  .toast,.modal-backdrop,.btn-add-year{display:none!important;}
+  .q-tab{display:none!important;}
+  #quarterly-content .section-title{color:#8baac8!important;}
+  .std-card{background:#0f1623!important;border-color:#1e3050!important;}
+  .std-hdr{border-bottom-color:#1e3050!important;}
+  .std-hdr.stronger{background:rgba(124,58,237,.08)!important;} .std-hdr.stronger h3{color:#a78bfa!important;}
+  .std-hdr.own{background:rgba(8,145,178,.08)!important;} .std-hdr.own h3{color:#00c6e0!important;}
+  .std-hdr.lead{background:rgba(5,150,105,.08)!important;} .std-hdr.lead h3{color:#10d98c!important;}
+  .std-hdr.execute{background:rgba(217,119,6,.08)!important;} .std-hdr.execute h3{color:#f59e0b!important;}
+  .std-hdr p{color:#4e6a88!important;}
+  .strand-tbl td{color:#8baac8!important;border-bottom-color:#1e3050!important;font-size:11px!important;}
+  .strand-tbl .sname{background:#151e2d!important;color:#8baac8!important;}
+  .yr-card{background:#0f1623!important;border-color:#1e3050!important;}
+  .yrc-year{color:#00c6e0!important;} .yrc-n{color:#dde8f5!important;} .yrc-sub{color:#4e6a88!important;}
+  .yr-card.current{border-color:#00c6e0!important;background:rgba(0,198,224,.04)!important;}
+  .empty-state{color:#4e6a88!important;}
+  .empty-state h3{color:#8baac8!important;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- HEADER -->
+<header>
+  <div class="header-brand">
+    <div class="wolf-icon">&#x1F43A;</div>
+    <div class="header-titles">
+      <h1>Pack Check-In Win Tracker</h1>
+      <p>STEEP Performance Framework</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="year-selector-wrap">
+      <label>Year</label>
+      <select id="header-year" onchange="switchYear(this.value)"></select>
+    </div>
+    <button class="btn-add-year" onclick="openModal('modal-addyear')">+ Year</button>
+    <button class="btn btn-outline btn-sm" onclick="showTab('log')">+ Log Win</button>
+  </div>
+</header>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('dashboard')" id="tab-dashboard">&#x1F4CA; Dashboard <span class="cnt" id="cnt-d">0</span></button>
+  <button class="tab-btn" onclick="showTab('log')" id="tab-log">&#x2795; Log Win</button>
+  <button class="tab-btn" onclick="showTab('wins')" id="tab-wins">&#x1F3C6; All Wins <span class="cnt" id="cnt-w">0</span></button>
+  <button class="tab-btn" onclick="showTab('quarterly')" id="tab-quarterly">&#x1F4C5; Quarterly</button>
+  <button class="tab-btn" onclick="showTab('allyears')" id="tab-allyears">&#x1F5C2; All Years</button>
+  <button class="tab-btn" onclick="showTab('standards')" id="tab-standards">&#x1F4CB; Standards</button>
+  <button class="tab-btn" onclick="showTab('data')" id="tab-data">&#x2699; Data</button>
+</div>
+
+<main>
+
+<!-- ════ DASHBOARD ════ -->
+<div class="tab-panel active" id="panel-dashboard">
+  <div class="year-banner">
+    <div class="ybanner-year" id="banner-year">2025</div>
+    <div class="ybanner-label">Calendar Year &middot; Performance Record</div>
+    <div class="ybanner-total" id="banner-total">0 wins</div>
+  </div>
+  <div class="rings">
+    <div class="ring-card stronger"><div class="ring-title">Stronger Together</div><div class="ring-num" id="d-stronger">0</div><div class="ring-sub">wins</div></div>
+    <div class="ring-card own"><div class="ring-title">Own the Outcome</div><div class="ring-num" id="d-own">0</div><div class="ring-sub">wins</div></div>
+    <div class="ring-card lead"><div class="ring-title">Lead the Way</div><div class="ring-num" id="d-lead">0</div><div class="ring-sub">wins</div></div>
+    <div class="ring-card execute"><div class="ring-title">Execute</div><div class="ring-num" id="d-execute">0</div><div class="ring-sub">wins</div></div>
+  </div>
+  <div class="stats-row">
+    <div class="stat-card stronger"><div class="stat-label">Q1 &middot; Jan&ndash;Mar</div><div class="stat-value" id="d-q1">0</div><div class="stat-sub">wins</div></div>
+    <div class="stat-card own"><div class="stat-label">Q2 &middot; Apr&ndash;Jun</div><div class="stat-value" id="d-q2">0</div><div class="stat-sub">wins</div></div>
+    <div class="stat-card lead"><div class="stat-label">Q3 &middot; Jul&ndash;Sep</div><div class="stat-value" id="d-q3">0</div><div class="stat-sub">wins</div></div>
+    <div class="stat-card execute"><div class="stat-label">Q4 &middot; Oct&ndash;Dec</div><div class="stat-value" id="d-q4">0</div><div class="stat-sub">wins</div></div>
+  </div>
+  <div class="dash-grid">
+    <div class="chart-card"><h3>Wins by Category</h3><div class="bar-chart" id="cat-chart"></div></div>
+    <div class="chart-card"><h3>Recent Wins</h3><div id="recent-wins"></div></div>
+  </div>
+</div>
+
+<!-- ════ LOG WIN ════ -->
+<div class="tab-panel" id="panel-log">
+  <div class="form-card">
+    <div class="section-title">Log a New Win</div>
+    <div class="form-row form-row-4">
+      <div class="form-group"><label>Year</label><select id="f-year" onchange="document.getElementById('f-date').value=defaultDateForYear(this.value)"></select></div>
+      <div class="form-group"><label>Quarter</label>
+        <select id="f-quarter">
+          <option value="">&#x2014; Quarter &#x2014;</option>
+          <option value="Q1">Q1 &middot; Jan&ndash;Mar</option>
+          <option value="Q2">Q2 &middot; Apr&ndash;Jun</option>
+          <option value="Q3">Q3 &middot; Jul&ndash;Sep</option>
+          <option value="Q4">Q4 &middot; Oct&ndash;Dec</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Standard</label>
+        <select id="f-standard" onchange="updateCats()">
+          <option value="">&#x2014; Select &#x2014;</option>
+          <option value="stronger">Stronger Together</option>
+          <option value="own">Own the Outcome</option>
+          <option value="lead">Lead the Way</option>
+          <option value="execute">Execute</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Category</label>
+        <select id="f-category"><option value="">&#x2014; Select Standard first &#x2014;</option></select>
+      </div>
+    </div>
+    <div class="form-row form-row-4">
+      <div class="form-group"><label>Date</label><input type="date" id="f-date"></div>
+      <div class="form-group"><label>Impact</label>
+        <select id="f-impact">
+          <option value="High">&#x1F7E2; High</option>
+          <option value="Medium" selected>&#x1F7E1; Medium</option>
+          <option value="Low">&#x26AA; Low</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Proficiency</label>
+        <select id="f-prof">
+          <option value="">&#x2014; Optional &#x2014;</option>
+          <option value="Developing">Developing</option>
+          <option value="Approaching">Approaching</option>
+          <option value="Proficient">Proficient</option>
+          <option value="Exceeds">Exceeds</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Manager Tracked (M)?</label>
+        <select id="f-managed"><option value="no">No</option><option value="yes">Yes &#x2014; Manager Metric</option></select>
+      </div>
+    </div>
+    <div class="form-row form-row-2">
+      <div class="form-group"><label>Win Title</label><input type="text" id="f-title" placeholder="Short title for this win&#x2026;"></div>
+      <div class="form-group"><label>Metric / Count (optional)</label><input type="text" id="f-metric" placeholder="e.g. 15 recognitions, 609 tickets"></div>
+    </div>
+    <div class="form-group" style="margin-bottom:14px;"><label>Description / Evidence</label>
+      <textarea id="f-desc" placeholder="Describe what you did, how it impacted the team or customers, any specific evidence or callouts&#x2026;"></textarea>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-primary" onclick="addWin()">&#x2713; Save Win</button>
+      <button class="btn btn-outline" onclick="clearForm()">Clear</button>
+      <label id="log-another-label" style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-left:6px;user-select:none;padding:7px 14px;border-radius:8px;border:1px solid var(--border2);transition:all .2s;background:var(--surface2);" onmouseenter="this.style.borderColor='var(--primary-dim)'" onmouseleave="if(!document.getElementById('log-another').checked)this.style.borderColor='var(--border2)'">
+        <input type="checkbox" id="log-another" style="display:none;" onchange="var l=this.parentElement;var box=l.querySelector('.custom-cb');if(this.checked){l.style.background='rgba(0,198,224,0.12)';l.style.borderColor='var(--primary)';l.querySelector('span').style.color='var(--primary)';box.style.background='var(--primary)';box.style.borderColor='var(--primary)';box.style.boxShadow='0 0 0 3px rgba(0,198,224,0.25)';box.querySelector('.custom-cb-dot').style.opacity='1';}else{l.style.background='var(--surface2)';l.style.borderColor='var(--border2)';l.querySelector('span').style.color='var(--text3)';box.style.background='transparent';box.style.borderColor='var(--border2)';box.style.boxShadow='none';box.querySelector('.custom-cb-dot').style.opacity='0';}">
+        <span class="custom-cb" style="width:17px;height:17px;border-radius:50%;border:2px solid var(--border2);background:transparent;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;box-shadow:none;">
+          <span class="custom-cb-dot" style="width:7px;height:7px;border-radius:50%;background:#050c17;opacity:0;transition:opacity .15s;flex-shrink:0;"></span>
+        </span>
+        <span style="font-size:12px;color:var(--text3);font-weight:600;transition:color .2s;">Log another after saving</span>
+      </label>
+    </div>
+  </div>
+  <div class="section-title">Recently Logged</div>
+  <div id="log-preview"></div>
+</div>
+
+<!-- ════ ALL WINS ════ -->
+<div class="tab-panel" id="panel-wins">
+  <div class="action-bar">
+    <span class="action-bar-label">Export</span>
+    <button class="btn btn-outline btn-sm" onclick="exportCSV(false)">&#x2B07; CSV (This Year)</button>
+    <button class="btn btn-outline btn-sm" onclick="exportCSV(true)">&#x2B07; CSV (All)</button>
+    <button class="btn btn-outline btn-sm" onclick="exportHTML()">&#x2B07; HTML</button>
+    <button class="btn btn-outline btn-sm" onclick="exportPDF()">&#x2B07; PDF (Print)</button>
+  </div>
+  <div class="filters-bar">
+    <input type="text" id="search" placeholder="&#x1F50D; Search&#x2026;" oninput="renderTable()" style="min-width:180px;">
+    <select id="fil-year" onchange="renderTable()"><option value="">All Years</option></select>
+    <select id="fil-std" onchange="renderTable()">
+      <option value="">All Standards</option>
+      <option value="stronger">Stronger Together</option>
+      <option value="own">Own the Outcome</option>
+      <option value="lead">Lead the Way</option>
+      <option value="execute">Execute</option>
+    </select>
+    <select id="fil-q" onchange="renderTable()">
+      <option value="">All Quarters</option>
+      <option value="Q1">Q1</option><option value="Q2">Q2</option>
+      <option value="Q3">Q3</option><option value="Q4">Q4</option>
+    </select>
+    <select id="fil-impact" onchange="renderTable()">
+      <option value="">All Impact</option>
+      <option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option>
+    </select>
+    <select id="fil-prof" onchange="renderTable()">
+      <option value="">All Proficiency</option>
+      <option value="Developing">Developing</option><option value="Approaching">Approaching</option>
+      <option value="Proficient">Proficient</option><option value="Exceeds">Exceeds</option>
+    </select>
+  </div>
+  <div class="table-wrap" id="wins-table"></div>
+</div>
+
+<!-- ════ QUARTERLY ════ -->
+<div class="tab-panel" id="panel-quarterly">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+    <span style="font-size:11px;color:var(--text3);font-weight:600;letter-spacing:1px;text-transform:uppercase;">Year:</span>
+    <select id="qview-year" onchange="renderQuarterly(currentQ)" style="width:auto;min-width:100px;"></select>
+  </div>
+  <div class="q-tabs">
+    <button class="q-tab active" onclick="showQ('Q1')" id="qt-Q1">Q1 &middot; Jan&ndash;Mar</button>
+    <button class="q-tab" onclick="showQ('Q2')" id="qt-Q2">Q2 &middot; Apr&ndash;Jun</button>
+    <button class="q-tab" onclick="showQ('Q3')" id="qt-Q3">Q3 &middot; Jul&ndash;Sep</button>
+    <button class="q-tab" onclick="showQ('Q4')" id="qt-Q4">Q4 &middot; Oct&ndash;Dec</button>
+  </div>
+  <div id="quarterly-content"></div>
+</div>
+
+<!-- ════ ALL YEARS ════ -->
+<div class="tab-panel" id="panel-allyears">
+  <div class="section-title">All Years</div>
+  <div class="year-grid" id="year-grid"></div>
+  <div id="year-detail"></div>
+</div>
+
+<!-- ════ STANDARDS ════ -->
+<div class="tab-panel" id="panel-standards">
+  <div class="standards-grid" id="standards-grid"></div>
+</div>
+
+<!-- ════ DATA MANAGEMENT ════ -->
+<div class="tab-panel" id="panel-data">
+  <div class="section-title">Data Management</div>
+
+  <!-- Backup -->
+  <div class="form-card" style="margin-bottom:18px;">
+    <div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:220px;">
+        <div style="font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px;">&#x1F4BE; Backup / Export Data</div>
+        <div style="font-size:12px;color:var(--text3);line-height:1.6;">Download all your wins as a <code style="background:var(--surface3);padding:1px 5px;border-radius:3px;font-size:11px;">.json</code> backup file. Save it somewhere safe in case your browser cache is cleared. You can re-import it at any time to restore your data.</div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;padding-top:4px;">
+        <button class="btn btn-primary" onclick="exportBackup()">&#x2B07; Download Backup (.json)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Restore -->
+  <div class="form-card" style="margin-bottom:18px;">
+    <div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:220px;">
+        <div style="font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px;">&#x1F4C2; Restore from Backup</div>
+        <div style="font-size:12px;color:var(--text3);line-height:1.6;">Import a previously exported <code style="background:var(--surface3);padding:1px 5px;border-radius:3px;font-size:11px;">.json</code> backup file. You can choose to <strong style="color:var(--text2);">merge</strong> (add to existing) or <strong style="color:var(--red);">replace</strong> (overwrite everything).</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;padding-top:4px;min-width:200px;">
+        <input type="file" id="import-file" accept=".json" style="font-size:12px;padding:6px;" onchange="previewImport(this)">
+        <div id="import-preview" style="font-size:11px;color:var(--text3);min-height:18px;"></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-outline btn-sm" onclick="doImport('merge')" id="btn-merge" disabled>&#x2795; Merge</button>
+          <button class="btn btn-danger-outline btn-sm" onclick="doImport('replace')" id="btn-replace" disabled>&#x21BA; Replace All</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Clear History -->
+  <div class="form-card" style="border-color:rgba(244,63,94,.2);">
+    <div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:220px;">
+        <div style="font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--red);margin-bottom:4px;">&#x26A0; Clear History</div>
+        <div style="font-size:12px;color:var(--text3);line-height:1.6;">Permanently delete wins from a specific year or all years. <strong style="color:var(--red);">This cannot be undone.</strong> Download a backup first if you want to preserve the data.</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;padding-top:4px;min-width:200px;">
+        <div class="form-group">
+          <label>Clear wins for year</label>
+          <select id="clear-year-sel" style="width:auto;">
+            <option value="">&#x2014; Select &#x2014;</option>
+            <option value="ALL">&#x26A0; ALL years</option>
+          </select>
+        </div>
+        <button class="btn btn-danger-outline btn-sm" onclick="openClearModal()">&#x1F5D1; Clear Selected</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats summary -->
+  <div style="margin-top:24px;">
+    <div class="section-title">Storage Summary</div>
+    <div id="storage-summary" style="font-size:13px;color:var(--text2);"></div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<!-- ── MODALS ── -->
+
+<!-- Add Year -->
+<div class="modal-backdrop" id="modal-addyear">
+  <div class="modal">
+    <h3>Add Year</h3>
+    <div class="modal-sub">Wins are organized by calendar year (Jan &ndash; Dec).</div>
+    <div class="form-group">
+      <label>Year</label>
+      <input type="number" id="addyear-input" min="2020" max="2099" placeholder="e.g. 2026">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('modal-addyear')">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmAddYear()">Add Year</button>
+    </div>
+  </div>
+</div>
+
+<!-- Clear Confirm -->
+<div class="modal-backdrop" id="modal-clear">
+  <div class="modal modal-danger">
+    <h3>&#x26A0; Confirm Clear</h3>
+    <div class="modal-sub" id="clear-confirm-msg">Are you sure?</div>
+    <div style="font-size:12px;color:var(--text3);background:rgba(244,63,94,.06);border:1px solid rgba(244,63,94,.15);border-radius:8px;padding:12px;margin-bottom:4px;">
+      Tip: go to the <strong style="color:var(--text2);">Data tab</strong> and download a backup before clearing.
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('modal-clear')">Cancel</button>
+      <button class="btn btn-danger-outline" onclick="confirmClear()">Yes, Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Win Modal -->
+<div class="modal-backdrop" id="modal-edit">
+  <div class="modal" style="width:600px;">
+    <h3>&#x270E; Edit Win</h3>
+    <div class="modal-sub">Update any fields below, then save.</div>
+    <input type="hidden" id="edit-id">
+    <div class="form-row form-row-4" style="margin-bottom:12px;">
+      <div class="form-group"><label>Year</label><select id="edit-year"></select></div>
+      <div class="form-group"><label>Quarter</label>
+        <select id="edit-quarter">
+          <option value="Q1">Q1 &middot; Jan&ndash;Mar</option>
+          <option value="Q2">Q2 &middot; Apr&ndash;Jun</option>
+          <option value="Q3">Q3 &middot; Jul&ndash;Sep</option>
+          <option value="Q4">Q4 &middot; Oct&ndash;Dec</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Standard</label>
+        <select id="edit-standard" onchange="updateEditCats()">
+          <option value="stronger">Stronger Together</option>
+          <option value="own">Own the Outcome</option>
+          <option value="lead">Lead the Way</option>
+          <option value="execute">Execute</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Category</label>
+        <select id="edit-category"></select>
+      </div>
+    </div>
+    <div class="form-row form-row-4" style="margin-bottom:12px;">
+      <div class="form-group"><label>Date</label><input type="date" id="edit-date"></div>
+      <div class="form-group"><label>Impact</label>
+        <select id="edit-impact">
+          <option value="High">&#x1F7E2; High</option>
+          <option value="Medium">&#x1F7E1; Medium</option>
+          <option value="Low">&#x26AA; Low</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Proficiency</label>
+        <select id="edit-prof">
+          <option value="">&#x2014; Optional &#x2014;</option>
+          <option value="Developing">Developing</option>
+          <option value="Approaching">Approaching</option>
+          <option value="Proficient">Proficient</option>
+          <option value="Exceeds">Exceeds</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Manager Tracked (M)?</label>
+        <select id="edit-managed">
+          <option value="no">No</option>
+          <option value="yes">Yes &#x2014; Manager Metric</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row form-row-2" style="margin-bottom:12px;">
+      <div class="form-group"><label>Win Title</label><input type="text" id="edit-title"></div>
+      <div class="form-group"><label>Metric / Count (optional)</label><input type="text" id="edit-metric"></div>
+    </div>
+    <div class="form-group" style="margin-bottom:4px;"><label>Description / Evidence</label>
+      <textarea id="edit-desc" style="min-height:90px;"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('modal-edit')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEdit()">&#x2713; Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" style="display:none;" class="toast"></div>
+<!-- Hidden file input trigger -->
+<input type="file" id="import-file-hidden" accept=".json" style="display:none;">
+
+<script>
+/* ── DATA ──────────────────────────────────────────────────────────────── */
+var CATS = {
+  stronger:[
+    {key:"recognition_performed",label:"Recognition Performed",managed:true},
+    {key:"mentoring_sessions",label:"Mentoring Sessions",managed:false},
+    {key:"improve_culture",label:"Improve Culture / Face of AW",managed:false},
+    {key:"pack_unity",label:"Pack Unity",managed:false},
+    {key:"other_stronger",label:"Other (Stronger Together)",managed:false}
+  ],
+  own:[
+    {key:"replicon",label:"Replicon (Timecard)",managed:true},
+    {key:"msa_learnamp",label:"MSA / Learnamp",managed:false},
+    {key:"role_certified",label:"Role Certified",managed:true},
+    {key:"office_attendance",label:"Office Attendance",managed:true},
+    {key:"other_own",label:"Other (Own the Outcome)",managed:false}
+  ],
+  lead:[
+    {key:"innovate_self_improve",label:"Innovate / Self Improve / Immersive Labs",managed:false},
+    {key:"certs",label:"Certifications",managed:false},
+    {key:"spidrs_tools",label:"SPiDRs / Tools / Methods / Etc",managed:false},
+    {key:"brand_awareness",label:"Brand Awareness",managed:false},
+    {key:"community_outreach",label:"Community Outreach",managed:false},
+    {key:"other_lead",label:"Other (Lead the Way)",managed:false}
+  ],
+  execute:[
+    {key:"recognition_received",label:"Recognition Received",managed:true},
+    {key:"spidrs_performed",label:"SPiDRs Performed / Trackable",managed:true},
+    {key:"partnership_awn_teams",label:"Partnership with AWN Teams (SIR, PS, TI, SPIDR 2.0)",managed:true},
+    {key:"tickets",label:"Tickets",managed:true},
+    {key:"other_execute",label:"Other (Execute)",managed:false}
+  ]
+};
+var SMETA={
+  stronger:{label:"Stronger Together",color:"#a78bfa"},
+  own:{label:"Own the Outcome",color:"#00c6e0"},
+  lead:{label:"Lead the Way",color:"#10d98c"},
+  execute:{label:"Execute",color:"#f59e0b"}
+};
+var STDS=[
+  {key:"stronger",title:"Stronger Together",
+   desc:"CSEs engage with others to build understanding, strengthen the team, and communicate effectively.",
+   strands:[
+    {name:"Seek to Understand",
+     dev:"Does not build skills or seek clarity. Does not seek opportunities to build relationships.",
+     app:"Builds skills individually. Relationships lack depth. Sometimes asks questions for clarity.",
+     pro:"Active listening and paraphrasing for clarity. Inquisitive toward the uniqueness of others internally and externally.",
+     exc:"Engages across multiple teams and segments. Seeks out and facilitates conversations that build strong relationships."},
+    {name:"Foster Pack Unity",
+     dev:"Uses divisive or accusatory language. Does not recognize or support others. Siloing and blame casting.",
+     app:"Passive recognition. Attends meetings out of obligation. Lacks depth of engagement.",
+     pro:"Participates in a pack unity alliance. Participates in VTO and office culture events. Ensures all voices are heard.",
+     exc:"Pack unity ambassador. Organizes events. Actively seeks achievements to recognize in others."},
+    {name:"Communicate with Candor",
+     dev:"Hostile communication. Lack of honesty. Addresses concerns with others rather than the individual it concerns.",
+     app:"Focuses on concerns rather than solutions. Avoids communicating unpleasant information.",
+     pro:"Communicates with clarity to share expectations, concerns, and solutions. Addresses the appropriate audience.",
+     exc:"Communicates with positive intentions. Actively addresses difficult situations. Helps others communicate well."}
+  ]},
+  {key:"own",title:"Own the Outcome",
+   desc:"CSEs have strong security knowledge, articulate information effectively, build trust, and follow policies.",
+   strands:[
+    {name:"Protect and Delight",
+     dev:"Lacks security standards knowledge. Erodes customer trust. Unable to provide timely or accurate information.",
+     app:"Incomplete security knowledge. Customer interaction is primarily reactive or delayed.",
+     pro:"Understands security standards. Builds customer trust. High level of responsiveness to customer requests.",
+     exc:"Comprehensive security knowledge. Maintains high trust through transparency. Balances security outcomes and customer experience."},
+    {name:"Be Accountable",
+     dev:"Policy and metric compliance below 60%. Places blame on others. Does not follow RTO.",
+     app:"Compliance 60 to 90%. Sometimes takes ownership. Occasionally follows RTO.",
+     pro:"Compliance at 90%+. Takes ownership of team and individual growth. Regularly follows RTO.",
+     exc:"98%+ compliance. Proactively solves concerns. Goes beyond RTO. Shows metrics behind improvements."},
+    {name:"Security First",
+     dev:"Unable to articulate the importance of security measures. Reactive. Neglects SPiDRs.",
+     app:"Understands security measures but cannot articulate them to customers. Some proactive attempts.",
+     pro:"Articulates security measures and their importance. Proactively identifies improvements. Contributes to SPiDRs.",
+     exc:"Creates urgency for customers around security measures. Proactively supports customers. Creates new SPiDRs around emerging threats."}
+  ]},
+  {key:"lead",title:"Lead the Way",
+   desc:"CSEs contribute to platform improvement, lead and elevate team members, and complete deliverables on time.",
+   strands:[
+    {name:"Innovate to Advance",
+     dev:"Denigrates or neglects AWN products, services, or platform.",
+     app:"Points out problems without solutions. Misses opportunities to collaborate on solutions.",
+     pro:"Provides constructive feedback. Advocates for customer feature requests via SIRs.",
+     exc:"Actively contributes to platform improvement. Builds requirements or prototypes. Plays a key role in Tech Lead or Product Team projects."},
+    {name:"Listen, Learn, Teach",
+     dev:"Works individually. Does not recognize the accomplishments of others. Does not accept feedback.",
+     app:"Identifies but does not recognize the work of others. Listens to feedback but does not reflect to improve.",
+     pro:"Promotes a team-first attitude. Recognizes accomplishments. Welcomes feedback to improve personal practice.",
+     exc:"Promotes team-first attitude across the organization. Seeks feedback. Supports the growth of others. Sees potential in others."},
+    {name:"Speed and Quality",
+     dev:"Consistently misses deadlines. Work lacks basic requirements. Unable to react to changing priorities.",
+     app:"Occasionally misses deadlines. Work meets basic requirements but may lack detail.",
+     pro:"Completes tasks within deadlines. Good attention to detail. Adapts to changing priorities.",
+     exc:"Completes tasks under tight deadlines without losing quality. Proactive. Volunteers for projects frequently."}
+  ]},
+  {key:"execute",title:"Execute",
+   desc:"CSEs complete tasks timely, manage workloads for customer and team success, and provide accurate information.",
+   strands:[
+    {name:"Deliver",
+     dev:"Ticket responses and deliverables not completed within SLO. Regularly does not action tickets within 24 hours.",
+     app:"Occasionally misses SLO. Occasional ticket commenting.",
+     pro:"Deliverables completed within SLO. Frequent ticket commenting. Regular updates during ongoing issues.",
+     exc:"Completed well before SLO. Always actions tickets in tierCST under 24 hours. Proactively reaches out to customers."},
+    {name:"Achieve",
+     dev:"Consistently mismanages workload with customer or team impact. Ticket follow-ups lag more than a day.",
+     app:"Occasionally has workload management issues. Tickets left uncommented even when work has been done.",
+     pro:"Manages workload so team and customers are not impacted. Detailed internal ticket notes after escalated calls.",
+     exc:"Manages workload for the team and supports other S2 teams. Independently gathers resources and proactively communicates."},
+    {name:"Accurate",
+     dev:"Reporting, data, ticket feedback or notes are unclear or inaccurate. Escalations incorrectly assigned.",
+     app:"Occasionally unclear or inaccurate. Occasionally incorrect escalation assignments.",
+     pro:"Clear and accurate reporting. Appropriately escalates and keeps all parties informed.",
+     exc:"Clear, accurate, and provides additional forward-thinking information. Anticipates customer questions proactively."}
+  ]}
+];
+
+/* ── STATE ──────────────────────────────────────────────────────────────── */
+var wins = JSON.parse(localStorage.getItem("pcwt_wins") || "[]");
+
+// Migrate from old key formats
+(function(){
+  var sources = ["packWins_v2","packWins"];
+  sources.forEach(function(k){
+    var old = localStorage.getItem(k);
+    if(old && wins.length===0){
+      try{
+        var p = JSON.parse(old);
+        if(p.length){
+          wins = p.map(function(w){
+            // Convert FY label to year if needed
+            var yr = w.year || w.fy || "2025";
+            if(String(yr).toUpperCase().startsWith("FY")){
+              var n = parseInt(String(yr).replace(/FY/i,""),10);
+              yr = (2000 + (n <= 99 ? n : n%100)).toString();
+            }
+            return Object.assign({},w,{year:String(yr)});
+          });
+          localStorage.setItem("pcwt_wins",JSON.stringify(wins));
+        }
+      }catch(e){}
+    }
+  });
+})();
+
+var years = (function(){
+  var stored = JSON.parse(localStorage.getItem("pcwt_years") || "null");
+  if(stored) return stored;
+  return ["2025"];
+})();
+
+var currentYear = localStorage.getItem("pcwt_currentYear") || "2025";
+if(years.indexOf(currentYear)===-1) years.push(currentYear);
+
+var currentQ = "Q1";
+var sortKey = "date", sortDir = -1;
+var pendingImportData = null, pendingClearYear = null;
+
+/* ── BOOT ───────────────────────────────────────────────────────────────── */
+document.addEventListener("DOMContentLoaded",function(){
+  document.getElementById("f-date").value = defaultDateForYear(document.getElementById("f-year").value);
+  renderStandards();
+  rebuildSelectors();
+  renderAll();
+  showTab("dashboard");
+});
+
+function save(){
+  localStorage.setItem("pcwt_wins",JSON.stringify(wins));
+  localStorage.setItem("pcwt_years",JSON.stringify(years));
+  localStorage.setItem("pcwt_currentYear",currentYear);
+}
+
+function winsFor(yr){ return wins.filter(function(w){ return w.year===yr; }); }
+
+function renderAll(){
+  updateCounts();
+  renderDashboard();
+  renderTable();
+  renderQuarterly(currentQ);
+  renderLogPreview();
+  renderAllYears();
+  renderDataTab();
+}
+
+/* ── SELECTORS ──────────────────────────────────────────────────────────── */
+function rebuildSelectors(){
+  years.sort();
+  var opts = years.map(function(y){
+    return "<option value=\""+y+"\""+(y===currentYear?" selected":"")+">"+y+"</option>";
+  }).join("");
+
+  document.getElementById("header-year").innerHTML = opts;
+  document.getElementById("f-year").innerHTML = opts;
+  document.getElementById("fil-year").innerHTML = "<option value=\"\">All Years</option>"+opts;
+  document.getElementById("qview-year").innerHTML = opts;
+
+  // Clear year select
+  var cs = document.getElementById("clear-year-sel");
+  cs.innerHTML = "<option value=\"\">&#x2014; Select &#x2014;</option><option value=\"ALL\">&#x26A0; ALL years</option>";
+  years.slice().reverse().forEach(function(y){
+    cs.innerHTML += "<option value=\""+y+"\">"+y+" ("+winsFor(y).length+" wins)</option>";
+  });
+}
+
+function switchYear(yr){
+  currentYear = yr;
+  save();
+  rebuildSelectors();
+  renderAll();
+}
+
+/* ── ADD / REMOVE YEAR ──────────────────────────────────────────────────── */
+function confirmAddYear(){
+  var val = String(parseInt(document.getElementById("addyear-input").value,10)||0);
+  if(val==="0"||val.length!==4){showToast("Enter a valid 4-digit year.",true);return;}
+  if(years.indexOf(val)!==-1){showToast(val+" already exists.",true);return;}
+  years.push(val);
+  currentYear=val;
+  save(); rebuildSelectors(); renderAll();
+  closeModal("modal-addyear");
+  showToast(val+" added!");
+}
+
+/* ── TABS ───────────────────────────────────────────────────────────────── */
+function showTab(t){
+  document.querySelectorAll(".tab-panel").forEach(function(p){p.classList.remove("active");});
+  document.querySelectorAll(".tab-btn").forEach(function(b){b.classList.remove("active");});
+  document.getElementById("panel-"+t).classList.add("active");
+  document.getElementById("tab-"+t).classList.add("active");
+  renderAll();
+}
+
+function updateCounts(){
+  document.getElementById("cnt-d").textContent = winsFor(currentYear).length;
+  document.getElementById("cnt-w").textContent = wins.length;
+}
+
+/* ── CATEGORIES ─────────────────────────────────────────────────────────── */
+function updateCats(){
+  var std=document.getElementById("f-standard").value;
+  var sel=document.getElementById("f-category");
+  sel.innerHTML="";
+  if(!std){sel.innerHTML="<option value=\"\">&#x2014; Select Standard first &#x2014;</option>";return;}
+  (CATS[std]||[]).forEach(function(c){
+    var o=document.createElement("option");
+    o.value=c.key;
+    o.textContent=c.label+(c.managed?" (M)":"");
+    sel.appendChild(o);
+  });
+}
+
+/* ── ADD WIN ────────────────────────────────────────────────────────────── */
+function defaultDateForYear(yr){
+  var today = new Date();
+  var todayYr = today.getFullYear().toString();
+  if(!yr || yr === todayYr) return today.toISOString().split("T")[0];
+  // Past year: default to Dec 31. Future year: default to Jan 1.
+  return parseInt(yr) < parseInt(todayYr) ? yr+"-12-31" : yr+"-01-01";
+}
+
+function addWin(){
+  var yr   = document.getElementById("f-year").value;
+  var q    = document.getElementById("f-quarter").value;
+  var std  = document.getElementById("f-standard").value;
+  var cat  = document.getElementById("f-category").value;
+  var date = document.getElementById("f-date").value;
+  var ttl  = document.getElementById("f-title").value.trim();
+  var desc = document.getElementById("f-desc").value.trim();
+  var imp  = document.getElementById("f-impact").value;
+  var pro  = document.getElementById("f-prof").value;
+  var mgd  = document.getElementById("f-managed").value;
+  var met  = document.getElementById("f-metric").value.trim();
+
+  if(!yr||!q||!std||!cat||!ttl||!desc){
+    showToast("Please fill in Year, Quarter, Standard, Category, Title, and Description.",true);return;
+  }
+  var catList=CATS[std]||[];
+  var catObj=null;
+  for(var i=0;i<catList.length;i++){if(catList[i].key===cat){catObj=catList[i];break;}}
+
+  var w={id:Date.now().toString(),year:yr,quarter:q,standard:std,category:cat,
+    categoryLabel:catObj?catObj.label:cat,date:date||new Date().toISOString().split("T")[0],
+    title:ttl,desc:desc,impact:imp,proficiency:pro,managed:mgd==="yes",metric:met,
+    created:new Date().toISOString()};
+
+  wins.unshift(w);
+  if(years.indexOf(yr)===-1){years.push(yr);years.sort();}
+  currentYear=yr;
+  save(); clearForm(); rebuildSelectors(); renderAll();
+  showToast("Win saved to "+yr+"!");
+  var logAnother=document.getElementById("log-another");
+  if(logAnother && logAnother.checked){ showTab("log"); } else { showTab("wins"); }
+}
+
+function clearForm(){
+  document.getElementById("f-standard").value="";
+  document.getElementById("f-category").innerHTML="<option value=\"\">&#x2014; Select Standard first &#x2014;</option>";
+  document.getElementById("f-quarter").value="";
+  document.getElementById("f-date").value=defaultDateForYear(document.getElementById("f-year").value);
+  document.getElementById("f-title").value="";
+  document.getElementById("f-desc").value="";
+  document.getElementById("f-impact").value="Medium";
+  document.getElementById("f-prof").value="";
+  document.getElementById("f-managed").value="no";
+  document.getElementById("f-metric").value="";
+}
+
+/* ── EDIT WIN ────────────────────────────────────────────────────────────── */
+function editWin(id){
+  var w=null;
+  for(var i=0;i<wins.length;i++){if(wins[i].id===id){w=wins[i];break;}}
+  if(!w)return;
+
+  // Populate year selector
+  var eysel=document.getElementById("edit-year");
+  eysel.innerHTML=years.map(function(y){
+    return "<option value=\""+y+"\""+( y===w.year?" selected":"")+">"+y+"</option>";
+  }).join("");
+
+  document.getElementById("edit-id").value=w.id;
+  document.getElementById("edit-quarter").value=w.quarter;
+  document.getElementById("edit-standard").value=w.standard;
+  document.getElementById("edit-date").value=w.date;
+  document.getElementById("edit-impact").value=w.impact;
+  document.getElementById("edit-prof").value=w.proficiency||"";
+  document.getElementById("edit-managed").value=w.managed?"yes":"no";
+  document.getElementById("edit-title").value=w.title;
+  document.getElementById("edit-metric").value=w.metric||"";
+  document.getElementById("edit-desc").value=w.desc;
+
+  // Populate categories for this standard, then set value
+  updateEditCats(w.category);
+
+  openModal("modal-edit");
+}
+
+function updateEditCats(preselect){
+  var std=document.getElementById("edit-standard").value;
+  var sel=document.getElementById("edit-category");
+  sel.innerHTML="";
+  (CATS[std]||[]).forEach(function(c){
+    var o=document.createElement("option");
+    o.value=c.key;
+    o.textContent=c.label+(c.managed?" (M)":"");
+    sel.appendChild(o);
+  });
+  if(preselect) sel.value=preselect;
+}
+
+function saveEdit(){
+  var id=document.getElementById("edit-id").value;
+  var idx=-1;
+  for(var i=0;i<wins.length;i++){if(wins[i].id===id){idx=i;break;}}
+  if(idx===-1){showToast("Win not found.",true);return;}
+
+  var yr   = document.getElementById("edit-year").value;
+  var q    = document.getElementById("edit-quarter").value;
+  var std  = document.getElementById("edit-standard").value;
+  var cat  = document.getElementById("edit-category").value;
+  var date = document.getElementById("edit-date").value;
+  var ttl  = document.getElementById("edit-title").value.trim();
+  var desc = document.getElementById("edit-desc").value.trim();
+  var imp  = document.getElementById("edit-impact").value;
+  var pro  = document.getElementById("edit-prof").value;
+  var mgd  = document.getElementById("edit-managed").value;
+  var met  = document.getElementById("edit-metric").value.trim();
+
+  if(!ttl||!desc){showToast("Title and Description are required.",true);return;}
+
+  var catList=CATS[std]||[];
+  var catObj=null;
+  for(var i=0;i<catList.length;i++){if(catList[i].key===cat){catObj=catList[i];break;}}
+
+  wins[idx]=Object.assign({},wins[idx],{
+    year:yr,quarter:q,standard:std,category:cat,
+    categoryLabel:catObj?catObj.label:cat,
+    date:date,title:ttl,desc:desc,impact:imp,
+    proficiency:pro,managed:mgd==="yes",metric:met,
+    edited:new Date().toISOString()
+  });
+
+  if(years.indexOf(yr)===-1){years.push(yr);years.sort();}
+  save(); rebuildSelectors(); renderAll();
+  closeModal("modal-edit");
+  showToast("Win updated!");
+}
+
+function deleteWin(id){
+  if(!confirm("Delete this win? This cannot be undone."))return;
+  wins=wins.filter(function(w){return w.id!==id;});
+  save(); renderAll();
+  showToast("Win deleted.");
+}
+
+/* ── DASHBOARD ──────────────────────────────────────────────────────────── */
+function renderDashboard(){
+  var yw=winsFor(currentYear);
+  document.getElementById("banner-year").textContent=currentYear;
+  document.getElementById("banner-total").textContent=yw.length+" wins";
+
+  var cs={stronger:0,own:0,lead:0,execute:0};
+  var qs={Q1:0,Q2:0,Q3:0,Q4:0};
+  var cc={};
+  yw.forEach(function(w){
+    cs[w.standard]=(cs[w.standard]||0)+1;
+    qs[w.quarter]=(qs[w.quarter]||0)+1;
+    cc[w.categoryLabel]=(cc[w.categoryLabel]||0)+1;
+  });
+  document.getElementById("d-stronger").textContent=cs.stronger||0;
+  document.getElementById("d-own").textContent=cs.own||0;
+  document.getElementById("d-lead").textContent=cs.lead||0;
+  document.getElementById("d-execute").textContent=cs.execute||0;
+  document.getElementById("d-q1").textContent=qs.Q1||0;
+  document.getElementById("d-q2").textContent=qs.Q2||0;
+  document.getElementById("d-q3").textContent=qs.Q3||0;
+  document.getElementById("d-q4").textContent=qs.Q4||0;
+
+  var vals=Object.values(cc);
+  var mx=vals.length?Math.max.apply(null,vals):1;
+  var ce=document.getElementById("cat-chart");
+  if(!vals.length){
+    ce.innerHTML="<div style=\"color:var(--text3);font-size:13px;padding:18px 0;text-align:center;\">No wins for "+currentYear+" yet</div>";
+  } else {
+    ce.innerHTML=Object.entries(cc).sort(function(a,b){return b[1]-a[1];}).slice(0,10).map(function(p){
+      return "<div class=\"bar-row\"><div class=\"bar-lbl\" title=\""+esc(p[0])+"\">"+esc(p[0])+"</div>" +
+        "<div class=\"bar-track\"><div class=\"bar-fill\" style=\"width:"+(p[1]/mx*100)+"%;background:var(--primary);\"></div></div>" +
+        "<div class=\"bar-n\">"+p[1]+"</div></div>";
+    }).join("");
+  }
+
+  var re=document.getElementById("recent-wins");
+  var rec=yw.slice(0,5);
+  if(!rec.length){
+    re.innerHTML="<div style=\"color:var(--text3);font-size:13px;padding:18px 0;text-align:center;\">No wins for "+currentYear+" yet</div>";
+  } else {
+    re.innerHTML=rec.map(function(w){
+      return "<div style=\"padding:9px 0;border-bottom:1px solid var(--border);display:flex;gap:10px;\">"+
+        "<div style=\"flex:1;min-width:0;\"><div style=\"font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px;\">"+esc(w.title)+"</div>"+
+        "<div style=\"display:flex;gap:5px;flex-wrap:wrap;\">"+sbadge(w.standard)+qbadge(w.quarter)+ibadge(w.impact)+"</div></div>"+
+        "<div class=\"td-mono\">"+w.date+"</div></div>";
+    }).join("")+(yw.length>5?"<div style=\"padding-top:10px;\"><a href=\"#\" onclick=\"showTab('wins');return false;\" style=\"color:var(--primary);font-size:12px;\">View all "+yw.length+" &#x2192;</a></div>":"");
+  }
+}
+
+/* ── TABLE ──────────────────────────────────────────────────────────────── */
+function renderTable(){
+  var s=(document.getElementById("search")?document.getElementById("search").value:"").toLowerCase();
+  var fyr=v("fil-year"),fst=v("fil-std"),fq=v("fil-q"),fi=v("fil-impact"),fp=v("fil-prof");
+
+  var f=wins.filter(function(w){
+    if(fyr&&w.year!==fyr)return false;
+    if(fst&&w.standard!==fst)return false;
+    if(fq&&w.quarter!==fq)return false;
+    if(fi&&w.impact!==fi)return false;
+    if(fp&&w.proficiency!==fp)return false;
+    if(s&&(w.title+w.desc+w.categoryLabel+(w.metric||"")+(w.year||"")).toLowerCase().indexOf(s)===-1)return false;
+    return true;
+  });
+
+  f.sort(function(a,b){
+    var va=(a[sortKey]||"").toString(),vb=(b[sortKey]||"").toString();
+    return va<vb?sortDir:va>vb?-sortDir:0;
+  });
+
+  var el=document.getElementById("wins-table");
+  if(!el)return;
+  if(!f.length){
+    el.innerHTML="<div class=\"empty-state\"><div class=\"icon\">&#x1F3C6;</div><h3>No wins found</h3><p>"+(wins.length===0?"Start logging your wins to build your performance review record.":"Try adjusting your filters.")+"</p></div>";
+    return;
+  }
+
+  var sd=sortDir>0?" &#x2191;":" &#x2193;";
+  el.innerHTML="<table><thead><tr>"+
+    hd("date","Date","width:80px;")+hd("year","Year","width:54px;")+hd("quarter","Qtr","width:50px;")+
+    hd("standard","Standard")+hd("categoryLabel","Category")+hd("title","Title / Description")+
+    hd("impact","Impact","width:76px;")+hd("proficiency","Proficiency","width:90px;")+
+    "<th style=\"width:80px;\"></th></tr></thead><tbody>"+
+    f.map(function(w){
+      return "<tr>"+
+        "<td class=\"td-mono\">"+w.date+"</td>"+
+        "<td><span class=\"badge b-year\">"+esc(w.year)+"</span></td>"+
+        "<td>"+qbadge(w.quarter)+"</td>"+
+        "<td>"+sbadge(w.standard)+"</td>"+
+        "<td><div class=\"td-meta\">"+esc(w.categoryLabel)+"</div>"+
+          (w.managed?"<span class=\"badge b-mgr\">Manager</span>":"")+
+          (w.metric?"<div style=\"margin-top:3px;font-size:11px;color:var(--amber);font-family:'IBM Plex Mono',monospace;\">"+esc(w.metric)+"</div>":"")+
+        "</td>"+
+        "<td><div class=\"td-main\" style=\"font-weight:500;\">"+esc(w.title)+"</div><div class=\"td-sub\">"+esc(w.desc)+"</div></td>"+
+        "<td>"+ibadge(w.impact)+"</td>"+
+        "<td>"+(w.proficiency?pbadge(w.proficiency):"<span style=\"color:var(--text3);\">&#x2014;</span>")+"</td>"+
+        "<td style=\"white-space:nowrap;\"><button class=\"btn btn-outline btn-xs\" onclick=\"editWin('"+w.id+"')\" style=\"margin-right:4px;\">&#x270E;</button><button class=\"btn btn-danger-outline btn-xs\" onclick=\"deleteWin('"+w.id+"')\">&#x2715;</button></td></tr>";
+    }).join("")+"</tbody></table>";
+
+  function hd(k,lbl,sty){
+    return "<th onclick=\"sortTable('"+k+"')\" style=\""+(sty||"")+"\">"+lbl+(sortKey===k?sd:"")+"</th>";
+  }
+}
+function v(id){var e=document.getElementById(id);return e?e.value:"";}
+function sortTable(k){if(sortKey===k)sortDir*=-1;else{sortKey=k;sortDir=-1;}renderTable();}
+
+/* ── QUARTERLY ──────────────────────────────────────────────────────────── */
+function showQ(q){
+  currentQ=q;
+  document.querySelectorAll(".q-tab").forEach(function(t){t.classList.remove("active");});
+  document.getElementById("qt-"+q).classList.add("active");
+  renderQuarterly(q);
+}
+
+function renderQuarterly(q){
+  var el=document.getElementById("quarterly-content");if(!el)return;
+  var qsel=document.getElementById("qview-year");
+  var vyr=qsel?qsel.value:currentYear;
+  var qw=wins.filter(function(w){return w.quarter===q&&w.year===vyr;});
+  var ql={Q1:"Jan&#x2013;Mar",Q2:"Apr&#x2013;Jun",Q3:"Jul&#x2013;Sep",Q4:"Oct&#x2013;Dec"};
+
+  var html="<div style=\"margin-bottom:18px;font-family:'Rajdhani',sans-serif;font-size:21px;font-weight:700;\">"+
+    vyr+" &middot; "+q+" <span style=\"color:var(--text3);font-size:15px;\">"+ql[q]+"</span> <span style=\"color:var(--primary);\">"+qw.length+" wins</span></div>";
+
+  if(!qw.length){
+    html+="<div class=\"empty-state\"><div class=\"icon\">&#x1F4CB;</div><h3>No wins for "+q+" in "+vyr+"</h3><p>Use Log Win to add wins, or try a different year above.</p></div>";
+  } else {
+    ["stronger","own","lead","execute"].forEach(function(std){
+      var sw=qw.filter(function(w){return w.standard===std;});
+      if(!sw.length)return;
+      var s=SMETA[std];
+      html+="<div style=\"margin-bottom:20px;\"><div class=\"section-title\" style=\"color:"+s.color+";\">"+ s.label+
+        " <span style=\"font-size:12px;color:var(--text3);font-family:'IBM Plex Sans',sans-serif;text-transform:none;letter-spacing:0;\">("+sw.length+")</span></div>"+
+        "<div class=\"table-wrap\"><table><thead><tr><th style=\"width:86px;\">Date</th><th>Category</th><th>Title / Description</th><th style=\"width:76px;\">Impact</th><th style=\"width:90px;\">Proficiency</th><th style=\"width:80px;\"></th></tr></thead><tbody>"+
+        sw.map(function(w){
+          return "<tr><td class=\"td-mono\">"+w.date+"</td>"+
+            "<td><div class=\"td-meta\">"+esc(w.categoryLabel)+"</div>"+
+            (w.managed?"<span class=\"badge b-mgr\">Manager</span>":"")+
+            (w.metric?"<div style=\"margin-top:3px;font-size:11px;color:var(--amber);font-family:'IBM Plex Mono',monospace;\">"+esc(w.metric)+"</div>":"")+
+            "</td>"+
+            "<td><div class=\"td-main\" style=\"font-weight:500;\">"+esc(w.title)+"</div><div class=\"td-sub\">"+esc(w.desc)+"</div></td>"+
+            "<td>"+ibadge(w.impact)+"</td>"+
+            "<td>"+(w.proficiency?pbadge(w.proficiency):"<span style=\"color:var(--text3);\">&#x2014;</span>")+"</td>"+
+            "<td style=\"white-space:nowrap;\"><button class=\"btn btn-outline btn-xs\" onclick=\"editWin('"+w.id+"')\" style=\"margin-right:4px;\">&#x270E;</button><button class=\"btn btn-danger-outline btn-xs\" onclick=\"deleteWin('"+w.id+"')\" >&#x2715;</button></td></tr>";
+        }).join("")+"</tbody></table></div></div>";
+    });
+  }
+  el.innerHTML=html;
+}
+
+/* ── ALL YEARS ──────────────────────────────────────────────────────────── */
+function renderAllYears(){
+  var gd=document.getElementById("year-grid"),dt=document.getElementById("year-detail");
+  if(!gd)return;
+  gd.innerHTML=years.slice().reverse().map(function(yr){
+    var c=winsFor(yr).length;
+    return "<div class=\"yr-card"+(yr===currentYear?" current":"")+"\" onclick=\"jumpToYear('"+yr+"')\">"+
+      "<div class=\"yrc-year\">"+yr+(yr===currentYear?" &#x2190;":"")+"</div>"+
+      "<div class=\"yrc-n\">"+c+"</div><div class=\"yrc-sub\">wins logged</div></div>";
+  }).join("");
+
+  if(!wins.length){dt.innerHTML="";return;}
+  var html="<div class=\"section-title\" style=\"margin-top:8px;\">Year-Over-Year Breakdown</div>"+
+    "<div class=\"table-wrap\"><table><thead><tr>"+
+    "<th>Year</th><th>Stronger Together</th><th>Own the Outcome</th><th>Lead the Way</th><th>Execute</th><th>Total</th><th>High Impact</th>"+
+    "</tr></thead><tbody>";
+  years.slice().reverse().forEach(function(yr){
+    var fw=winsFor(yr);
+    var bs={stronger:0,own:0,lead:0,execute:0};
+    var hi=0;
+    fw.forEach(function(w){bs[w.standard]=(bs[w.standard]||0)+1;if(w.impact==="High")hi++;});
+    html+="<tr>"+
+      "<td><span class=\"badge b-year\">"+yr+"</span></td>"+
+      "<td><span style=\"color:#a78bfa;font-weight:600;\">"+bs.stronger+"</span></td>"+
+      "<td><span style=\"color:var(--primary);font-weight:600;\">"+bs.own+"</span></td>"+
+      "<td><span style=\"color:var(--green);font-weight:600;\">"+bs.lead+"</span></td>"+
+      "<td><span style=\"color:var(--amber);font-weight:600;\">"+bs.execute+"</span></td>"+
+      "<td><strong>"+fw.length+"</strong></td>"+
+      "<td>"+ibadge("High")+" "+hi+"</td></tr>";
+  });
+  dt.innerHTML=html+"</tbody></table></div>";
+}
+function jumpToYear(yr){switchYear(yr);showTab("dashboard");}
+
+/* ── LOG PREVIEW ────────────────────────────────────────────────────────── */
+function renderLogPreview(){
+  var el=document.getElementById("log-preview");if(!el)return;
+  var r=wins.slice(0,5);
+  if(!r.length){
+    el.innerHTML="<div class=\"empty-state\"><div class=\"icon\">&#x270F;&#xFE0F;</div><h3>Ready to log!</h3><p>Fill out the form above to start tracking your wins.</p></div>";
+    return;
+  }
+  el.innerHTML="<div class=\"table-wrap\"><table><thead><tr><th>Date</th><th>Year</th><th>Q</th><th>Standard</th><th>Title</th><th>Impact</th></tr></thead><tbody>"+
+    r.map(function(w){
+      return "<tr><td class=\"td-mono\">"+w.date+"</td><td><span class=\"badge b-year\">"+esc(w.year)+"</span></td>"+
+        "<td>"+qbadge(w.quarter)+"</td><td>"+sbadge(w.standard)+"</td>"+
+        "<td class=\"td-main\">"+esc(w.title)+"</td><td>"+ibadge(w.impact)+"</td></tr>";
+    }).join("")+"</tbody></table></div>";
+}
+
+/* ── STANDARDS ──────────────────────────────────────────────────────────── */
+function renderStandards(){
+  var el=document.getElementById("standards-grid");if(!el)return;
+  el.innerHTML=STDS.map(function(s){
+    return "<div class=\"std-card\"><div class=\"std-hdr "+s.key+"\"><h3>"+s.title+"</h3><p>"+s.desc+"</p></div>"+
+      "<table class=\"strand-tbl\"><thead><tr>"+
+      "<td class=\"sname\" style=\"font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);\">Strand</td>"+
+      "<td class=\"lcell\"><span class=\"pp pp-dev\">Developing</span></td>"+
+      "<td class=\"lcell\"><span class=\"pp pp-app\">Approaching</span></td>"+
+      "<td class=\"lcell\"><span class=\"pp pp-pro\">Proficient</span></td>"+
+      "<td class=\"lcell\"><span class=\"pp pp-exc\">Exceeds</span></td>"+
+      "</tr></thead><tbody>"+
+      s.strands.map(function(t){
+        return "<tr><td class=\"sname\">"+t.name+"</td>"+
+          "<td class=\"lcell\">"+t.dev+"</td><td class=\"lcell\">"+t.app+"</td>"+
+          "<td class=\"lcell\">"+t.pro+"</td><td class=\"lcell\">"+t.exc+"</td></tr>";
+      }).join("")+"</tbody></table></div>";
+  }).join("");
+}
+
+/* ── DATA TAB ───────────────────────────────────────────────────────────── */
+function renderDataTab(){
+  var el=document.getElementById("storage-summary");if(!el)return;
+  var bytes=new Blob([localStorage.getItem("pcwt_wins")||""]).size;
+  var kb=(bytes/1024).toFixed(1);
+  el.innerHTML=
+    "<div style=\"display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;\">"+
+    "<div style=\"background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;\">"+
+      "<div style=\"font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:4px;\">Total Wins</div>"+
+      "<div style=\"font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--primary);\">"+wins.length+"</div></div>"+
+    "<div style=\"background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;\">"+
+      "<div style=\"font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:4px;\">Years Tracked</div>"+
+      "<div style=\"font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--green);\">"+years.length+"</div></div>"+
+    "<div style=\"background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;\">"+
+      "<div style=\"font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:4px;\">Storage Used</div>"+
+      "<div style=\"font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--amber);\">"+kb+" <span style=\"font-size:14px;\">KB</span></div></div>"+
+    "<div style=\"background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;\">"+
+      "<div style=\"font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:4px;\">High Impact</div>"+
+      "<div style=\"font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:#a78bfa;\">"+wins.filter(function(w){return w.impact==="High";}).length+"</div></div>"+
+    "</div>";
+}
+
+/* ── EXPORT BACKUP ──────────────────────────────────────────────────────── */
+function exportBackup(){
+  var payload={
+    version:2,
+    exportedAt:new Date().toISOString(),
+    wins:wins,
+    years:years
+  };
+  dlFile("pack-wins-backup-"+new Date().toISOString().slice(0,10)+".json","application/json",JSON.stringify(payload,null,2));
+  showToast("Backup downloaded!");
+}
+
+/* ── IMPORT ─────────────────────────────────────────────────────────────── */
+function previewImport(input){
+  var file=input.files[0];
+  if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var d=JSON.parse(e.target.result);
+      var wArr=Array.isArray(d)?d:(d.wins||[]);
+      if(!Array.isArray(wArr)||!wArr.length){
+        document.getElementById("import-preview").innerHTML="<span style=\"color:var(--red);\">No wins found in file.</span>";
+        return;
+      }
+      pendingImportData={wins:wArr,years:d.years||[]};
+      document.getElementById("import-preview").innerHTML=
+        "<span style=\"color:var(--green);\">&#x2713; "+wArr.length+" wins detected</span>";
+      document.getElementById("btn-merge").disabled=false;
+      document.getElementById("btn-replace").disabled=false;
+    }catch(err){
+      document.getElementById("import-preview").innerHTML="<span style=\"color:var(--red);\">Invalid file. Must be a .json backup.</span>";
+    }
+  };
+  reader.readAsText(file);
+}
+
+function doImport(mode){
+  if(!pendingImportData){showToast("No file selected.",true);return;}
+  var iw=pendingImportData.wins;
+  var iyr=pendingImportData.years||[];
+
+  if(mode==="replace"){
+    if(!confirm("This will delete all "+wins.length+" existing wins and replace with "+iw.length+" imported wins. Are you sure?"))return;
+    wins=iw.map(function(w){return Object.assign({},w,{year:String(w.year||w.fy||2025)});});
+    years=iyr.length?iyr:[];
+  } else {
+    // Merge: skip duplicates by id
+    var existing={};
+    wins.forEach(function(w){existing[w.id]=true;});
+    var added=0;
+    iw.forEach(function(w){
+      if(!existing[w.id]){
+        wins.push(Object.assign({},w,{year:String(w.year||w.fy||2025)}));
+        added++;
+      }
+    });
+    showToast(added+" wins merged ("+( iw.length-added)+" duplicates skipped).");
+  }
+
+  // Rebuild years from wins
+  var yset={};
+  wins.forEach(function(w){yset[w.year]=true;});
+  years.forEach(function(y){yset[y]=true;});
+  years=Object.keys(yset).sort();
+  if(!years.length)years=["2025"];
+
+  pendingImportData=null;
+  document.getElementById("import-file").value="";
+  document.getElementById("import-preview").innerHTML="";
+  document.getElementById("btn-merge").disabled=true;
+  document.getElementById("btn-replace").disabled=true;
+  save(); rebuildSelectors(); renderAll();
+  if(mode==="replace")showToast("Data replaced with "+iw.length+" imported wins.");
+}
+
+/* ── CLEAR HISTORY ──────────────────────────────────────────────────────── */
+function openClearModal(){
+  var sel=document.getElementById("clear-year-sel").value;
+  if(!sel){showToast("Select a year to clear first.",true);return;}
+  pendingClearYear=sel;
+  var msg=sel==="ALL"
+    ?"Delete ALL "+wins.length+" wins across all years? This cannot be undone."
+    :"Delete all "+winsFor(sel).length+" wins from "+sel+"? This cannot be undone.";
+  document.getElementById("clear-confirm-msg").textContent=msg;
+  openModal("modal-clear");
+}
+
+function confirmClear(){
+  if(!pendingClearYear){closeModal("modal-clear");return;}
+  var yr=pendingClearYear;
+  if(yr==="ALL"){
+    wins=[];
+    years=["2025"];
+    currentYear=years[0];
+  } else {
+    wins=wins.filter(function(w){return w.year!==yr;});
+    years=years.filter(function(y){return y!==yr;});
+    if(!years.length)years=["2025"];
+    if(currentYear===yr)currentYear=years[years.length-1];
+  }
+  pendingClearYear=null;
+  save(); rebuildSelectors(); renderAll();
+  closeModal("modal-clear");
+  showToast(yr==="ALL"?"All history cleared.":"Wins for "+yr+" deleted.");
+}
+
+/* ── EXPORTS ────────────────────────────────────────────────────────────── */
+function exportCSV(all){
+  var data=all?wins:winsFor(currentYear);
+  var hdr=["Year","Date","Quarter","Standard","Category","Manager Tracked","Title","Description","Impact","Proficiency","Metric"];
+  var rows=data.map(function(w){
+    return [w.year,w.date,w.quarter,(SMETA[w.standard]||{label:w.standard}).label,
+      w.categoryLabel,w.managed?"Yes":"No",w.title,w.desc,w.impact,w.proficiency||"",w.metric||""];
+  });
+  var csv=[hdr].concat(rows).map(function(r){
+    return r.map(function(c){return'"'+String(c||"").replace(/"/g,'""')+'"';}).join(",");
+  }).join("\n");
+  dlFile("pack-wins-"+(all?"all":currentYear)+".csv","text/csv",csv);
+}
+
+function exportHTML(){
+  var ql={Q1:"Jan\u2013Mar",Q2:"Apr\u2013Jun",Q3:"Jul\u2013Sep",Q4:"Oct\u2013Dec"};
+  var sn={stronger:"Stronger Together",own:"Own the Outcome",lead:"Lead the Way",execute:"Execute"};
+  var sc={stronger:"#a78bfa",own:"#00c6e0",lead:"#10d98c",execute:"#f59e0b"};
+  var sbg={stronger:"rgba(124,58,237,.15)",own:"rgba(8,145,178,.15)",lead:"rgba(5,150,105,.15)",execute:"rgba(217,119,6,.15)"};
+  var sbdr={stronger:"rgba(124,58,237,.3)",own:"rgba(8,145,178,.3)",lead:"rgba(5,150,105,.3)",execute:"rgba(217,119,6,.3)"};
+  var ic={High:{bg:"rgba(16,217,140,.12)",c:"#10d98c",b:"rgba(16,217,140,.2)"},
+          Medium:{bg:"rgba(245,158,11,.12)",c:"#f59e0b",b:"rgba(245,158,11,.2)"},
+          Low:{bg:"rgba(99,125,170,.12)",c:"#7f9fc0",b:"rgba(99,125,170,.15)"}};
+  var pc={Developing:{bg:"rgba(244,63,94,.12)",c:"#fb7185"},Approaching:{bg:"rgba(245,158,11,.12)",c:"#f59e0b"},
+          Proficient:{bg:"rgba(16,217,140,.12)",c:"#10d98c"},Exceeds:{bg:"rgba(0,198,224,.12)",c:"#00c6e0"}};
+
+  function badge(label,bg,color,border){
+    return "<span style=\"display:inline-flex;align-items:center;padding:2px 8px;border-radius:5px;font-size:10px;font-weight:700;letter-spacing:.3px;background:"+bg+";color:"+color+";border:1px solid "+(border||"transparent")+";white-space:nowrap;\">"+label+"</span>";
+  }
+  function ibadge(i){ var d=ic[i]||ic.Low; return badge(i||"\u2014",d.bg,d.c,d.b); }
+  function pbadge(p){ var d=pc[p]; return d?badge(p,d.bg,d.c,"transparent"):"<span style=\"color:#4e6a88;\">\u2014</span>"; }
+  function sbadge(s){ return badge(sn[s]||s,sbg[s]||"#222",sc[s]||"#ccc",sbdr[s]||"#444"); }
+
+  var totalWins=wins.length;
+  var exportDate=new Date().toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"});
+
+  // Summary stats
+  var allStdCounts={stronger:0,own:0,lead:0,execute:0};
+  wins.forEach(function(w){allStdCounts[w.standard]=(allStdCounts[w.standard]||0)+1;});
+
+  var statsHtml="<div style=\"display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:32px;\">";
+  ["stronger","own","lead","execute"].forEach(function(s){
+    statsHtml+="<div style=\"background:#0f1623;border:1px solid "+sbdr[s]+";border-radius:10px;padding:16px;border-top:3px solid "+sc[s]+";\">"+
+      "<div style=\"font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#4e6a88;margin-bottom:6px;\">"+sn[s]+"</div>"+
+      "<div style=\"font-family:'Rajdhani',sans-serif;font-size:36px;font-weight:700;color:"+sc[s]+";line-height:1;\">"+allStdCounts[s]+"</div>"+
+      "<div style=\"font-size:11px;color:#4e6a88;margin-top:2px;\">wins</div></div>";
+  });
+  statsHtml+="</div>";
+
+  var body="";
+  years.slice().reverse().forEach(function(yr){
+    var yw=winsFor(yr);if(!yw.length)return;
+    var ystdCounts={stronger:0,own:0,lead:0,execute:0};
+    yw.forEach(function(w){ystdCounts[w.standard]=(ystdCounts[w.standard]||0)+1;});
+
+    body+="<div style=\"margin-bottom:48px;\">";
+    // Year header bar
+    body+="<div style=\"display:flex;align-items:center;gap:16px;padding:14px 20px;background:rgba(0,198,224,.04);border:1px solid rgba(0,198,224,.12);border-radius:10px;margin-bottom:20px;\">"+
+      "<div style=\"font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:#00c6e0;letter-spacing:1px;\">"+yr+"</div>"+
+      "<div style=\"flex:1;\"><div style=\"font-size:11px;color:#4e6a88;letter-spacing:1px;text-transform:uppercase;\">Calendar Year &middot; Performance Record</div></div>"+
+      "<div style=\"font-family:'Rajdhani',sans-serif;font-size:16px;color:#8baac8;\">"+yw.length+" wins</div></div>";
+
+    // Mini year stats
+    body+="<div style=\"display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:24px;\">";
+    ["stronger","own","lead","execute"].forEach(function(s){
+      body+="<div style=\"background:#0f1623;border:1px solid #1e3050;border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:10px;\">"+
+        "<div style=\"width:3px;height:30px;background:"+sc[s]+";border-radius:2px;flex-shrink:0;\"></div>"+
+        "<div><div style=\"font-size:10px;color:#4e6a88;font-weight:700;letter-spacing:1px;text-transform:uppercase;\">"+sn[s]+"</div>"+
+        "<div style=\"font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:"+sc[s]+";line-height:1.2;\">"+ystdCounts[s]+"</div></div></div>";
+    });
+    body+="</div>";
+
+    ["Q1","Q2","Q3","Q4"].forEach(function(q){
+      var qw=yw.filter(function(w){return w.quarter===q;});if(!qw.length)return;
+      var qc={Q1:"#818cf8",Q2:"#22d3ee",Q3:"#10d98c",Q4:"#f59e0b"};
+      var qbg={Q1:"rgba(99,102,241,.1)",Q2:"rgba(6,182,212,.1)",Q3:"rgba(16,185,129,.1)",Q4:"rgba(245,158,11,.1)"};
+
+      body+="<div style=\"margin-bottom:28px;\">"+
+        "<div style=\"display:flex;align-items:center;gap:10px;margin-bottom:14px;\">"+
+          "<div style=\"font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:"+qc[q]+";\">"+q+"</div>"+
+          "<div style=\"font-size:12px;color:#4e6a88;\">"+ql[q]+"</div>"+
+          "<div style=\"flex:1;height:1px;background:#1e3050;\"></div>"+
+          "<div style=\"background:"+qbg[q]+";color:"+qc[q]+";border:1px solid "+qc[q]+"33;border-radius:5px;padding:2px 10px;font-size:11px;font-weight:700;\">"+qw.length+" wins</div>"+
+        "</div>";
+
+      body+="<div style=\"background:#0f1623;border:1px solid #1e3050;border-radius:10px;overflow:hidden;\">"+
+        "<table style=\"width:100%;border-collapse:collapse;\">"+
+        "<thead><tr>"+
+          "<th style=\"background:#151e2d;padding:9px 13px;text-align:left;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#4e6a88;border-bottom:1px solid #1e3050;width:80px;\">Date</th>"+
+          "<th style=\"background:#151e2d;padding:9px 13px;text-align:left;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#4e6a88;border-bottom:1px solid #1e3050;\">Standard</th>"+
+          "<th style=\"background:#151e2d;padding:9px 13px;text-align:left;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#4e6a88;border-bottom:1px solid #1e3050;\">Category</th>"+
+          "<th style=\"background:#151e2d;padding:9px 13px;text-align:left;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#4e6a88;border-bottom:1px solid #1e3050;\">Title &amp; Description</th>"+
+          "<th style=\"background:#151e2d;padding:9px 13px;text-align:left;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#4e6a88;border-bottom:1px solid #1e3050;width:70px;\">Impact</th>"+
+          "<th style=\"background:#151e2d;padding:9px 13px;text-align:left;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#4e6a88;border-bottom:1px solid #1e3050;width:85px;\">Proficiency</th>"+
+        "</tr></thead><tbody>"+
+        qw.map(function(w,i){
+          var rowbg=i%2===0?"transparent":"rgba(255,255,255,.015)";
+          return "<tr style=\"border-bottom:1px solid #1e3050;background:"+rowbg+";\">"+
+            "<td style=\"padding:11px 13px;font-family:monospace;font-size:11px;color:#4e6a88;vertical-align:top;\">"+w.date+"</td>"+
+            "<td style=\"padding:11px 13px;vertical-align:top;\">"+sbadge(w.standard)+"</td>"+
+            "<td style=\"padding:11px 13px;vertical-align:top;\">"+
+              "<div style=\"font-size:12px;color:#8baac8;\">"+esc(w.categoryLabel)+"</div>"+
+              (w.managed?"<span style=\"display:inline-block;margin-top:3px;padding:1px 6px;border-radius:4px;font-size:9px;font-weight:700;background:rgba(244,63,94,.1);color:#fb7185;border:1px solid rgba(244,63,94,.2);\">Manager</span>":"")+
+              (w.metric?"<div style=\"margin-top:4px;font-family:monospace;font-size:10px;color:#f59e0b;\">"+esc(w.metric)+"</div>":"")+
+            "</td>"+
+            "<td style=\"padding:11px 13px;vertical-align:top;max-width:320px;\">"+
+              "<div style=\"font-size:13px;font-weight:600;color:#dde8f5;margin-bottom:4px;\">"+esc(w.title)+"</div>"+
+              "<div style=\"font-size:12px;color:#8baac8;line-height:1.55;\">"+esc(w.desc)+"</div>"+
+            "</td>"+
+            "<td style=\"padding:11px 13px;vertical-align:top;\">"+ibadge(w.impact)+"</td>"+
+            "<td style=\"padding:11px 13px;vertical-align:top;\">"+pbadge(w.proficiency)+"</td>"+
+          "</tr>";
+        }).join("")+
+        "</tbody></table></div></div>";
+    });
+    body+="</div>";
+  });
+
+  var css="@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');"+
+    "*{box-sizing:border-box;margin:0;padding:0;}"+
+    "body{background:#080d17;color:#dde8f5;font-family:'IBM Plex Sans',sans-serif;font-size:14px;padding:0;margin:0;}"+
+    "body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,198,224,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,198,224,.025) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0;}"+
+    ".wrap{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 0 60px;}"+
+    ".page-header{background:linear-gradient(90deg,#0a1528,#080d17 50%,#0a1528);border-bottom:1px solid #1e3050;padding:20px 40px;display:flex;align-items:center;gap:14px;margin-bottom:40px;position:sticky;top:0;backdrop-filter:blur(12px);z-index:10;}"+
+    ".wolf{width:38px;height:38px;background:linear-gradient(135deg,#00c6e0,#0090a8);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 0 20px rgba(0,198,224,.3);flex-shrink:0;}"+
+    ".ph-title{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;letter-spacing:1.5px;color:#fff;text-transform:uppercase;}"+
+    ".ph-sub{font-size:10px;color:#4e6a88;letter-spacing:2px;text-transform:uppercase;font-family:'IBM Plex Mono',monospace;margin-top:1px;}"+
+    ".ph-right{margin-left:auto;text-align:right;}"+
+    ".ph-date{font-size:11px;color:#4e6a88;font-family:'IBM Plex Mono',monospace;}"+
+    ".ph-count{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:#00c6e0;}"+
+    ".inner{padding:0 40px;}";
+
+  var html="<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\">"+
+    "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">"+
+    "<title>Win Tracker Export &mdash; "+exportDate+"</title>"+
+    "<style>"+css+"</style></head><body>"+
+    "<div class=\"page-header\">"+
+      "<div class=\"wolf\">\uD83D\uDC3A</div>"+
+      "<div><div class=\"ph-title\">Win Tracker</div><div class=\"ph-sub\">STEEP Performance Framework</div></div>"+
+      "<div class=\"ph-right\"><div class=\"ph-count\">"+totalWins+" wins</div><div class=\"ph-date\">Exported "+exportDate+"</div></div>"+
+    "</div>"+
+    "<div class=\"wrap\"><div class=\"inner\">"+
+    (years.length>1?statsHtml:"")+
+    body+
+    "</div></div></body></html>";
+
+  dlFile("win-tracker-export-"+new Date().toISOString().slice(0,10)+".html","text/html",html);
+}
+
+function exportPDF(){window.print();}
+
+function dlFile(name,mime,content){
+  var a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([content],{type:mime}));
+  a.download=name;a.click();
+  URL.revokeObjectURL(a.href);
+  showToast("File downloaded!");
+}
+
+/* ── BADGES ─────────────────────────────────────────────────────────────── */
+function sbadge(s){
+  var m={stronger:"Stronger Together",own:"Own the Outcome",lead:"Lead the Way",execute:"Execute"};
+  return "<span class=\"badge b-"+s+"\">"+(m[s]||s)+"</span>";
+}
+function qbadge(q){return "<span class=\"badge b-"+(q||"").toLowerCase()+"\">"+(q||"")+"</span>";}
+function ibadge(i){
+  var c={High:"b-hi",Medium:"b-med",Low:"b-lo"};
+  return "<span class=\"badge "+(c[i]||"b-lo")+"\">"+(i||"&#x2014;")+"</span>";
+}
+function pbadge(p){
+  var c={Developing:"pp-dev",Approaching:"pp-app",Proficient:"pp-pro",Exceeds:"pp-exc"};
+  return "<span class=\"pp "+(c[p]||"")+"\">" +p+"</span>";
+}
+function esc(s){
+  if(!s)return"";
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+/* ── MODALS ─────────────────────────────────────────────────────────────── */
+function openModal(id){
+  document.getElementById(id).classList.add("open");
+  if(id==="modal-addyear"){
+    var n=parseInt(years[years.length-1]||"2025",10)+1;
+    document.getElementById("addyear-input").value=n;
+    setTimeout(function(){document.getElementById("addyear-input").select();},40);
+  }
+}
+function closeModal(id){document.getElementById(id).classList.remove("open");}
+document.querySelectorAll(".modal-backdrop").forEach(function(el){
+  el.addEventListener("click",function(e){if(e.target===this)this.classList.remove("open");});
+});
+
+/* ── TOAST ──────────────────────────────────────────────────────────────── */
+var tt;
+function showToast(msg,err){
+  var el=document.getElementById("toast");
+  el.textContent=msg;el.style.display="flex";
+  el.style.borderColor=err?"rgba(244,63,94,.4)":"var(--green-dim)";
+  el.style.color=err?"var(--red)":"var(--green)";
+  clearTimeout(tt);
+  tt=setTimeout(function(){el.style.display="none";},3500);
+}
+</script>
+</body>
+</html>
