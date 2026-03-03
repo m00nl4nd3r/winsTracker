@@ -119,12 +119,45 @@ Chrome 90+, Firefox 88+, Edge 90+, Safari 14+. Responsive layout works on mobile
 
 ---
 
+---
+
+## Running with Docker
+
+If you'd rather run the tool on a local web server instead of opening the file directly, a Docker setup is included.
+
+**Requirements:** [Docker](https://docs.docker.com/get-docker/) (with Compose)
+
+### Start
+
+```bash
+docker compose up -d
+```
+
+Then open [http://localhost:8080](http://localhost:8080) in your browser.
+
+### Stop
+
+```bash
+docker compose down
+```
+
+### Rebuild after updating the HTML file
+
+```bash
+docker compose up -d --build
+```
+
+> **Note:** The tool still uses `localStorage` for data storage, so your wins are saved in the browser — not inside the container. Data persists across restarts as long as you use the same browser.
+
 ## File Structure
 
 ```
 winsTracker/
 ├── wins-tracker-v3.0.html   # Current version — single self-contained file
 ├── wins-tracker-v2.0.html   # Previous version
+├── Dockerfile
+├── docker-compose.yml
+├── .dockerignore
 └── README.md
 ```
 
